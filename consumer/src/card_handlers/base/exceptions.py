@@ -1,0 +1,6 @@
+class CardHandlerException(Exception):
+    ...
+
+
+class NoSuchHandler(CardHandlerException):
+    ...
