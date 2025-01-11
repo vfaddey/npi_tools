@@ -1,0 +1,1 @@
+from src.domain.adapters.auth import AuthAdapter
