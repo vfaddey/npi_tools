@@ -1,16 +1,22 @@
 from abc import ABC, abstractmethod
-from typing import BinaryIO
+from uuid import UUID
+
+from src.domain.entities.file import File
 
 
 class FileRepository(ABC):
     @abstractmethod
-    async def upload_file(self, file: BinaryIO, file_name: str, content_type: str) -> str:
+    async def save(self, file: File) -> File:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_file_url(self, file_key: str, expires_in: int = 3600) -> str:
+    async def get_by_id(self, file_id: int | UUID) -> File:
         raise NotImplementedError
 
     @abstractmethod
-    async def delete_file(self, file_key: str):
+    async def get_files_by_user(self, user_id: int | UUID):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete(self, file_id: UUID):
         raise NotImplementedError

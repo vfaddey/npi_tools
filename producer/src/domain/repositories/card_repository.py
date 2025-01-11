@@ -1,23 +1,27 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from producer.src.domain.entities.task import Task
+from src.domain.entities.card import Card
 
 
-class TaskRepository(ABC):
+class CardRepository(ABC):
 
     @abstractmethod
-    async def create(self, task: Task) -> Task:
+    async def create(self, card: Card) -> Card:
         raise NotImplementedError
 
     @abstractmethod
-    async def get(self, task_id: UUID) -> Task:
+    async def get(self, card_id: UUID) -> Card:
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, task_id: UUID, task: Task) -> Task:
+    async def get_by_user_id(self, user_id: UUID) -> list[Card]:
         raise NotImplementedError
 
     @abstractmethod
-    async def delete(self, task_id: UUID):
+    async def update(self, card: Card) -> Card:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete(self, card_id: UUID):
         raise NotImplementedError
