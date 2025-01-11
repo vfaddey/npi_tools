@@ -1,0 +1,1 @@
+from src.domain.exceptions.users import UserNotFound
