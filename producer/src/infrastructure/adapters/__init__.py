@@ -1,0 +1,1 @@
+from src.infrastructure.adapters.npi_auth import NPIAuthAdapter
