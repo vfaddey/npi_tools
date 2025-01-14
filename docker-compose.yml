@@ -22,7 +22,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     env_file:
-      - ./producer/.env
+      - .env
 
   minio:
     image: minio/minio:latest
@@ -30,7 +30,7 @@ services:
     networks:
       - tutor-local-network
     env_file:
-      - ./producer/.env
+      - .env
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
