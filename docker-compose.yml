@@ -9,7 +9,7 @@ services:
     networks:
       - tutor-local-network
     env_file:
-      - .env
+      - ./producer/.env
     depends_on:
       - rabbitmq
       - minio
