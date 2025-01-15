@@ -38,8 +38,8 @@ async def upload_file(uploaded_file: UploadFile,
         file_data = await uploaded_file.read()
         file = await use_case.execute(user.id, file_data, uploaded_file.filename)
         return UploadFileResponse(id=file.id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except NPIToolsException as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get('/{file_id}',
