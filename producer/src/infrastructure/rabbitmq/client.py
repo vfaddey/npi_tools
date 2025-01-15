@@ -1,5 +1,7 @@
 import json
-from aio_pika import connect, Message, DeliveryMode
+
+import aio_pika
+from aio_pika import Message, DeliveryMode
 
 from src.domain.entities import Card
 from src.infrastructure.config import settings
@@ -15,9 +17,13 @@ class RabbitMQClient:
         self.queue = None
 
     async def connect(self):
-        self.connection = await connect(self.url)
-        self.channel = await self.connection.channel()
-        await self.channel.declare_queue(self.queue, durable=True)
+        try:
+            self.connection = await aio_pika.connect_robust(self.url)
+            self.channel = await self.connection.channel()
+            await self.channel.set_qos(prefetch_count=10)
+            queue_object = await self.channel.declare_queue(self.queue, durable=True)
+        except Exception as e:
+            raise e
 
     async def publish_card(self, card: Card):
         data = {
