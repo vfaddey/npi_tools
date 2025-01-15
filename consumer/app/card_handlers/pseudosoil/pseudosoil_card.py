@@ -1,21 +1,21 @@
 from pathlib import Path
-from consumer.src.card_handlers.pseudosoil.src.results import (
+from consumer.app.card_handlers.pseudosoil.src.results import (
     calculate_selected_case,
     generate_plot,
 )
-from consumer.src.card_handlers.pseudosoil.src.calculate_permeability import (
+from consumer.app.card_handlers.pseudosoil.src.calculate_permeability import (
     calculate_entry_pressures,
     calculate_permeability,
     filter_outliers,
     calculate_average_permeability,
     well_performance_permeability,
 )
-from consumer.src.card_handlers.pseudosoil.src.excel_reader import (
+from consumer.app.card_handlers.pseudosoil.src.excel_reader import (
     read_parameters_lab,
     read_parameters_isotropic,
     read_parameters_well,
 )
-from consumer.src.card_handlers.base.card_handler import (
+from consumer.app.card_handlers.base.card_handler import (
     CardHandler,
     HandlerResult,
     DataAsset,

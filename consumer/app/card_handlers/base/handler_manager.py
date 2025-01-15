@@ -1,7 +1,7 @@
 from typing import Type
 
-from consumer.src.card_handlers.base.card_handler import CardHandler
-from consumer.src.card_handlers.base.exceptions import NoSuchHandler
+from consumer.app.card_handlers.base.card_handler import CardHandler
+from consumer.app.card_handlers.base.exceptions import NoSuchHandler
 
 
 class HandlerManager:

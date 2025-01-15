@@ -1,7 +1,7 @@
 import math
 from typing import List
 import numpy as np
-from consumer.src.card_handlers.pseudosoil.src.data_class import (
+from consumer.app.card_handlers.pseudosoil.src.data_class import (
     LabExperimentData,
     WellParameters,
 )

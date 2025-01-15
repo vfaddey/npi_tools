@@ -1,5 +1,5 @@
 from pathlib import Path
-from consumer.src.card_handlers.pseudosoil.src.pseudosoil_calculator import (
+from consumer.app.card_handlers.pseudosoil.src.pseudosoil_calculator import (
     calculate_case_1,
     calculate_case_2,
     calculate_case_3,
