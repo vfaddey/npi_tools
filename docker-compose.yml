@@ -3,6 +3,7 @@ version: "3.8"
 
 services:
   producer:
+    container_name: producer
     build:
       context: ./producer
       dockerfile: Dockerfile
@@ -16,6 +17,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.10.7-management
+    container_name: rabbitmq
     networks:
       - tutor_local_default
     environment:
@@ -27,6 +29,7 @@ services:
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
+    container_name: minio
     networks:
       - tutor_local_default
     env_file:
