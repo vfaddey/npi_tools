@@ -1,4 +1,4 @@
-from consumer.src.card_handlers.base.card_handler import CardHandler, HandlerResult, DataAsset
+from consumer.app.card_handlers.base.card_handler import CardHandler, HandlerResult, DataAsset
 import pandas as pd
 
 from producer.src.domain.entities.task import CardType

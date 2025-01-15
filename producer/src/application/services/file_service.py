@@ -22,7 +22,8 @@ class FileService:
                           user_id: uuid.UUID,
                           bucket_name: str,
                           file_data: bytes,
-                          filename: str) -> File:
+                          filename: str,
+                          is_public: bool = False) -> File:
         file_id = uuid.uuid4()
 
         loop = asyncio.get_event_loop()
@@ -39,7 +40,8 @@ class FileService:
             id=file_id,
             user_id=user_id,
             filename=filename,
-            uploaded_at=datetime.utcnow()
+            uploaded_at=datetime.utcnow(),
+            is_public=is_public
         )
         await self.file_repo.save(file)
         return file

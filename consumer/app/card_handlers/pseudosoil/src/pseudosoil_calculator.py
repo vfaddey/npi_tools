@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
-from consumer.src.card_handlers.pseudosoil.src.excel_reader import (
+from consumer.app.card_handlers.pseudosoil.src.excel_reader import (
     read_parameters_isotropic,
     get_selected_case,
 )

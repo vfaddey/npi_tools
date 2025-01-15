@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from consumer.src.card_handlers.pseudosoil.src.data_class import (
+from consumer.app.card_handlers.pseudosoil.src.data_class import (
     WellParameters,
     LabExperimentData,
 )
