@@ -18,7 +18,7 @@ class RabbitMQClient:
 
     async def connect(self):
         try:
-            self.connection = await aio_pika.connect_robust(self.url)
+            self.connection = await aio_pika.connect(self.url)
             self.channel = await self.connection.channel()
             await self.channel.set_qos(prefetch_count=10)
             queue_object = await self.channel.declare_queue(self.queue, durable=True)
