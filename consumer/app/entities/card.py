@@ -20,8 +20,6 @@ class CardStatus(str, Enum):
 class Card:
     id: str | int | UUID
     created_at: datetime
-    data_url: str
+    file_id: UUID
     status: CardStatus
     result: Optional[dict | HandlerResult]
-    message: Optional[str] = None
-    error: Optional[str] = None
