@@ -26,6 +26,19 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     env_file:
       - .env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    entrypoint: >
+      /bin/bash -c "
+      rabbitmq-server &
+      sleep 10 &&
+      rabbitmqctl add_vhost my_vhost &&
+      rabbitmqctl set_permissions -p my_vhost admin '.*' '.*' '.*' &&
+      rabbitmqctl set_permissions -p / admin '.*' '.*' '.*' &&
+      rabbitmqctl stop_app &&
+      rabbitmqctl start_app &&
+      wait
+      "
 
   minio:
     image: minio/minio:latest
@@ -41,6 +54,11 @@ services:
     volumes:
       - ./minio-data:/data
 
+
+
+volumes:
+  rabbitmq_data:
+    driver: local
 
 networks:
   tutor_local_default:
