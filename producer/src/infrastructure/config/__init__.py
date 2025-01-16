@@ -1,0 +1,1 @@
+from src.infrastructure.config.config import settings
