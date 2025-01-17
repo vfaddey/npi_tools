@@ -1,5 +1,6 @@
+from io import BytesIO
 from pathlib import Path
-from consumer.app.card_handlers.pseudosoil.src.pseudosoil_calculator import (
+from app.card_handlers.pseudosoil.src.pseudosoil_calculator import (
     calculate_case_1,
     calculate_case_2,
     calculate_case_3,
@@ -12,18 +13,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def calculate_selected_case(parameters, file_path: Path):
+def calculate_selected_case(parameters, file_content: pd.ExcelFile):
     """
     Функция, которая выполняет расчет в зависимости от выбранного случая.
 
-    :param parameters: Кортеж считанных значений.
-    :param file_path: Путь для считывания выбранного случая.
+    :param parameters: Кортеж считанных значеfile_content.parse()ний.
+    :param file_path: Путь для считывания выбра
 
     :return: Результаты расчета в зависимости от выбранного случая.
     """
     # Считываем выбранный случай из Excel
-    selected_case = pd.read_excel(
-        file_path,
+    selected_case = file_content.parse(
         usecols="B",  # Считываем только колонку B
         sheet_name="Капилляры и трещины",
         nrows=1,  # Считываем только первую строку
@@ -50,7 +50,7 @@ def calculate_selected_case(parameters, file_path: Path):
         raise ValueError("Неизвестный случай")
 
 
-def generate_plot(k_values_calculated, average_k_value, output_path: Path) -> None:
+def generate_plot(k_values_calculated, average_k_value) -> BytesIO:
     """
     Генерирует график результатов определения проницаемости и сохраняет его в формате SVG.
 
@@ -86,15 +86,16 @@ def generate_plot(k_values_calculated, average_k_value, output_path: Path) -> No
     # Добавление легенды
     plt.legend()
 
-    # Проверка и изменение расширения пути на .svg
-    if output_path.suffix != ".svg":
-        output_path = output_path.with_suffix(".svg")
+    output = BytesIO()
 
-    # Сохранение графика в файл в формате SVG
-    plt.savefig(output_path, format="svg")
-
-    # Закрытие графика
+    # Сохранение графика в поток в формате SVG
+    plt.savefig(output, format="svg")
     plt.close()
+
+    # Перемотка потока в начало
+    output.seek(0)
+
+    return output
 
 
 def save_results_to_excel(average_k_value: float, output_path_excel: Path) -> None:
