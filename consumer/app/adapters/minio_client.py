@@ -1,5 +1,5 @@
 from minio import Minio
-from src.infrastructure.config import settings
+from app.core.config import settings
 
 client = Minio(
     settings.MINIO_ENDPOINT,
