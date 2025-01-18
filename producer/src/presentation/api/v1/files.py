@@ -46,10 +46,16 @@ async def upload_file(uploaded_file: UploadFile,
             description='Скачать файл по id')
 async def get_file_by_id(file_id: UUID4,
                          use_case: GetFileUseCase = Depends(get_file_use_case),
-                         user: User = Depends(get_current_user)):
+                         user: User = Depends(get_current_user),
+                         ):
     try:
         file, data = await use_case.execute(file_id, user.id)
         encoded_filename = quote(file.filename)
+        if file.filename.endswith('.svg'):
+            return StreamingResponse(
+                data,
+                media_type='image/svg+xml',
+            )
         return StreamingResponse(
             data,
             media_type='application/octet-stream',
