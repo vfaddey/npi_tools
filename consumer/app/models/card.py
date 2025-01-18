@@ -10,7 +10,7 @@ from app.entities.card import CardStatus
 class CardModel(Base):
     __tablename__ = "cards"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     card_type = Column(String, nullable=False, index=True)
     status = Column(Enum(CardStatus), default=CardStatus.PENDING, nullable=False)
     markdown_text = Column(String, nullable=False, default="")
