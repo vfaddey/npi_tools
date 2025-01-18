@@ -14,11 +14,10 @@ class RabbitMQClient:
         self.queue = queue
         self.connection = None
         self.channel = None
-        self.queue = None
 
     async def connect(self):
         try:
-            self.connection = await aio_pika.connect(self.url)
+            self.connection = await aio_pika.connect_robust(self.url)
             self.channel = await self.connection.channel()
             await self.channel.set_qos(prefetch_count=10)
             queue_object = await self.channel.declare_queue(self.queue, durable=True)
@@ -26,20 +25,24 @@ class RabbitMQClient:
             raise e
 
     async def publish_card(self, card: Card):
-        data = {
-            'id': str(card.id),
-            'file_id': str(card.file_id),
-            'card_type': card.card_type,
-        }
-        message = Message(
-            json.dumps(data).encode(),
-            delivery_mode=DeliveryMode.PERSISTENT
-        )
-        await self.channel.default_exchange.publish(
-            message,
-            routing_key=settings.RABBITMQ_QUEUE
-        )
-        print(f"Published task {card.id}")
+        try:
+            data = {
+                'id': str(card.id),
+                'file_id': str(card.file_id),
+                'card_type': card.card_type,
+            }
+            message = Message(
+                json.dumps(data).encode(),
+                delivery_mode=DeliveryMode.PERSISTENT
+            )
+            print(self.queue)
+            await self.channel.default_exchange.publish(
+                message,
+                routing_key=self.queue
+            )
+            print(f"Published task {card.id}")
+        except Exception as e:
+            print(f"Error publishing task {card.id}: {e}")
 
     async def close(self):
         await self.connection.close()
