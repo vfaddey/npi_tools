@@ -11,8 +11,9 @@ from src.infrastructure.db import Base
 class CardModel(Base):
     __tablename__ = "cards"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     card_type = Column(String, nullable=False, index=True)
+    card_type_translation = Column(String, nullable=True)
     status = Column(Enum(CardStatus), default=CardStatus.PENDING, nullable=False)
     markdown_text = Column(String, nullable=False, default="")
     file_id = Column(UUID(as_uuid=True), ForeignKey("files.id", ondelete="CASCADE"), nullable=False)
