@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -8,12 +8,13 @@ from app.card_handlers.base.card_handler import HandlerResult
 
 class CardType(Enum):
     PVT = 'pvt'
+    PSEUDOSOIL = 'pseudosoil'
 
 
 class CardStatus(str, Enum):
     FAILED = 'failed'
     PENDING = 'pending'
-    SUCCESS = 'success'
+    COMPLETE = 'complete'
 
 
 @dataclass
@@ -22,4 +23,9 @@ class Card:
     created_at: datetime
     file_id: UUID
     status: CardStatus
+    user_id: UUID
+    card_type: str
     result: Optional[dict | HandlerResult]
+
+    def dump(self):
+        return asdict(self)
