@@ -6,8 +6,7 @@ from uuid import UUID
 from app.card_handlers.base.card_handler import HandlerResult
 
 
-class CardType(Enum):
-    PVT = 'pvt'
+class CardType(str, Enum):
     PSEUDOSOIL = 'pseudosoil'
 
 

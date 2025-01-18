@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 from app.card_handlers.base.exceptions import CardHandlerException
+from app.card_handlers.base.utils import print_work_time
 from app.card_handlers.pseudosoil.src.results import (
     calculate_selected_case,
     generate_plot,
@@ -24,18 +25,18 @@ from app.card_handlers.base.card_handler import (
     HandlerResult,
     DataAsset,
 )
+from app.entities.card import CardType
 
 
 class PseudosoilHandler(CardHandler):
-    CARD_TYPE = 'pseudosoil'
+    CARD_TYPE = CardType.PSEUDOSOIL
 
+    @print_work_time
     def process(self, data) -> HandlerResult:
         """
         Основной метод обработки данных.
         """
         try:
-            print(type(data))
-            # data.seek(0)
             file_content = pd.ExcelFile(data)
 
             if not data.name.endswith('.xlsx'):
