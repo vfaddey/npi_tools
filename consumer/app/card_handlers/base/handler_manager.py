@@ -1,11 +1,11 @@
 from typing import Type
 
-from consumer.app.card_handlers.base.card_handler import CardHandler
-from consumer.app.card_handlers.base.exceptions import NoSuchHandler
+from app.card_handlers.base.card_handler import CardHandler
+from app.card_handlers.base.exceptions import NoSuchHandler
 
 
 class HandlerManager:
-    def __init__(self, handlers: list[Type[CardHandler]]):
+    def __init__(self, *handlers: Type[CardHandler]):
         self._handlers = {
             h.CARD_TYPE: h for h in handlers
         }
