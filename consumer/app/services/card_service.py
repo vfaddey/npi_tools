@@ -9,7 +9,7 @@ from minio import Minio
 from app.card_handlers.base.card_handler import HandlerResult
 from app.card_handlers.base.exceptions import NoSuchHandler
 from app.card_handlers.base.handler_manager import HandlerManager
-from app.entities.card import Card, CardStatus
+from app.entities.card import Card, CardStatus, CardType
 from app.entities.file import File
 from app.exceptions.card import CardNotFound
 from app.exceptions.file import FileNotFound, NotAFileOwner
@@ -39,12 +39,10 @@ class CardService:
                                              user_id=card.user_id,
                                              bucket_name=settings.MINIO_BUCKET_NAME)
             handler = self._handler_manager.get_handler(card.card_type)
-            result = handler.process(data)
-            print(result)
-            updated_card = await self.__save_result(card, result)
-            print(updated_card.dump())
+            if card.status == CardStatus.PENDING:
+                result = handler.process(data)
+                updated_card = await self.__save_result(card, result)
         except CardNotFound as e:
-            print(e)
             return None
         except (FileNotFound, NotAFileOwner, NoSuchHandler) as e:
             card.result = {
