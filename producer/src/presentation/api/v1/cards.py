@@ -8,6 +8,7 @@ from src.application.exceptions.files import NotAFileOwner, FileNotFound
 from src.application.use_cases.cards import CreateCardUseCase, GetUserCardsUseCase, GetCardUseCase, DeleteCardUseCase, \
     UpdateCardUseCase
 from src.domain.entities import User, Card
+from src.domain.entities.card import CardType, CARD_TYPE_TRANSLATIONS
 from src.domain.exceptions.cards import CardNotFound
 from src.presentation.api.deps import get_current_user, get_create_card_use_case, get_card_use_case, \
     get_delete_card_use_case, get_user_cards_use_case, get_update_card_use_case
@@ -31,6 +32,18 @@ async def create_card(card: CreateCardSchema,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except FileNotFound as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@router.get('/types',
+            description='Список всех доступных карточек')
+async def get_types():
+    return [
+        {
+        'type': t,
+        'translation': CARD_TYPE_TRANSLATIONS.get(t)
+        }
+        for t in CardType
+    ]
 
 
 @router.get('',

@@ -10,11 +10,11 @@ class CardService:
                  card_repository: CardRepository,
                  rabbitmq_client: RabbitMQClient):
         self._card_repository = card_repository
-        self._rabbitmq_clint = rabbitmq_client
+        self._rabbitmq_client = rabbitmq_client
 
     async def create(self, card: Card) -> Card:
         created = await self._card_repository.create(card)
-        await self._rabbitmq_clint.publish_card(created)
+        await self._rabbitmq_client.publish_card(created)
         return created
 
     async def get_by_id(self, card_id: UUID) -> Card:
