@@ -10,6 +10,7 @@ from src.domain.entities.card import CardType
 class CreateCardSchema(BaseModel):
     file_id: UUID4
     card_type: CardType
+    group_id: Optional[UUID4] = None
 
 
 class CardSchema(BaseModel):
@@ -20,6 +21,7 @@ class CardSchema(BaseModel):
     markdown_text: str
     status: CardStatus
     user_id: UUID4
+    group_id: UUID4
     result: Optional[dict] = {}
 
     created_at: Optional[datetime]
