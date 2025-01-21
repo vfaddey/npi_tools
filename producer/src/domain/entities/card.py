@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, Field, field
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -27,10 +27,11 @@ class Card:
     card_type: Optional[str] = None
     card_type_translation: Optional[str] = None
     id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
     markdown_text: Optional[str] = None
     status: Optional[CardStatus] = None
     user_id: Optional[UUID] = None
-    result: Optional[dict] = None
+    result: Optional[dict] = field(default_factory=dict)
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
