@@ -23,3 +23,4 @@ class UserModel(Base):
 
     files = relationship("FileModel", back_populates="user")
     cards = relationship("CardModel", back_populates="user")
+    groups = relationship("GroupModel", back_populates="user")
