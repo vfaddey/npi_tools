@@ -6,6 +6,16 @@ from src.application.services.group_service import GroupService
 from src.domain.entities import Group
 
 
+class CreateGroupUseCase:
+    def __init__(self,
+                 group_service: GroupService):
+        self._group_service = group_service
+
+    async def execute(self, name: str, user_id: UUID) -> Group:
+        group = Group(name=name, user_id=user_id)
+        return await self._group_service.create(group)
+
+
 class GetGroupsUseCase:
 
     def __init__(self, group_service: GroupService):
