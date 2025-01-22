@@ -14,7 +14,8 @@ from src.application.use_cases.files import DeleteFileUseCase
 from src.application.use_cases.get_file import GetFileUseCase
 from src.application.use_cases.get_user import GetUserUseCase
 from src.application.use_cases.get_user_files import GetUserFilesUseCase
-from src.application.use_cases.groups import GetGroupsUseCase, RenameGroupUseCase, DeleteGroupUseCase
+from src.application.use_cases.groups import GetGroupsUseCase, RenameGroupUseCase, DeleteGroupUseCase, \
+    CreateGroupUseCase
 from src.domain.adapters import AuthAdapter
 from src.domain.entities import User
 from src.domain.exceptions import UserNotFound
@@ -108,6 +109,9 @@ async def get_rename_group_use_case(group_service: GroupService = Depends(get_gr
 
 async def get_delete_group_use_case(group_service: GroupService = Depends(get_group_service)) -> DeleteGroupUseCase:
     return DeleteGroupUseCase(group_service)
+
+async def get_create_group_use_case(group_service: GroupService = Depends(get_group_service)) -> CreateGroupUseCase:
+    return CreateGroupUseCase(group_service)
 
 
 async def get_card_service(card_repository: SqlaCardRepository = Depends(get_card_repository)) -> CardService:
