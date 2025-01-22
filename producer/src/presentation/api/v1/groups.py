@@ -4,14 +4,30 @@ from starlette import status
 
 from src.application.exceptions.base import NPIToolsException
 from src.application.exceptions.groups import NotAGroupOwner
-from src.application.use_cases.groups import GetGroupsUseCase, RenameGroupUseCase, DeleteGroupUseCase
+from src.application.use_cases.groups import GetGroupsUseCase, RenameGroupUseCase, DeleteGroupUseCase, \
+    CreateGroupUseCase
 from src.domain.entities import User
 from src.domain.exceptions import GroupNotFound
 from src.presentation.api.deps import get_current_user, get_groups_use_case, get_rename_group_use_case, \
-    get_delete_group_use_case
-from src.presentation.schemas.group import GroupSchema, RenameGroupSchema
+    get_delete_group_use_case, get_create_group_use_case
+from src.presentation.schemas.group import GroupSchema, RenameGroupSchema, CreateGroupSchema
 
 router = APIRouter(prefix='/groups', tags=['groups'])
+
+
+
+@router.post('',
+             response_model=GroupSchema,
+             status_code=status.HTTP_201_CREATED,
+             description='Создать группу')
+async def create_group(group: CreateGroupSchema,
+                       user: User = Depends(get_current_user),
+                       use_case: CreateGroupUseCase = Depends(get_create_group_use_case)):
+    try:
+        result = await use_case.execute(group.name, user.id)
+        return result
+    except NPIToolsException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.get('',

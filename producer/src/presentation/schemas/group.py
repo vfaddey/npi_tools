@@ -5,6 +5,10 @@ from pydantic import BaseModel, UUID4
 from src.presentation.schemas.card import CardSchema
 
 
+class CreateGroupSchema(BaseModel):
+    name: str
+
+
 class RenameGroupSchema(BaseModel):
     new_name: str
     group_id: UUID4
