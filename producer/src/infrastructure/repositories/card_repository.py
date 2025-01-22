@@ -17,6 +17,7 @@ class SqlaCardRepository(CardRepository):
 
     async def create(self, card: Card) -> Card:
         card_db = CardModel(**card.dump())
+        print(card.dump())
         try:
             self._session.add(card_db)
             await self._session.commit()
@@ -76,6 +77,7 @@ class SqlaCardRepository(CardRepository):
                     status=card_db.status,
                     markdown_text=card_db.markdown_text,
                     file_id=card_db.file_id,
+                    group_id=card_db.group_id,
                     created_at=card_db.created_at,
                     updated_at=card_db.updated_at,
                     result=card_db.result)

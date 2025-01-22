@@ -2,25 +2,38 @@ from typing import List
 from uuid import UUID
 
 from src.application.exceptions.cards import NotACardOwner
+from src.application.exceptions.groups import NotAGroupOwner
 from src.application.services.card_service import CardService
 from src.application.services.file_service import FileService
+from src.application.services.group_service import GroupService
 from src.application.services.user_service import UserService
-from src.domain.entities import Card
+from src.domain.entities import Card, Group
 from src.infrastructure.minio import BUCKET_NAME
 
 
 class CreateCardUseCase:
     def __init__(self,
                  card_service: CardService,
-                 file_service: FileService):
+                 file_service: FileService,
+                 group_service: GroupService):
         self._card_service = card_service
         self._file_service = file_service
+        self._group_service = group_service
 
     async def execute(self, card: Card, user_id: UUID) -> Card:
         try:
             file, _ = await self._file_service.get_by_id(card.file_id,
                                                 user_id,
                                                 BUCKET_NAME)
+            if not card.group_id:
+                new_group = Group(name='#1', user_id=user_id)
+                new_group = await self._group_service.create(new_group)
+                card.group_id = new_group.id
+            else:
+                group_ex = await self._group_service.get_by_id(card.group_id)
+                if group_ex.user_id != user_id:
+                    raise NotAGroupOwner('You are not allowed to create card in this group')
+                card.group_id = group_ex.id
             card.user_id = user_id
             result = await self._card_service.create(card)
             return result

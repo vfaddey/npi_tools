@@ -5,6 +5,7 @@ from starlette import status
 
 from src.application.exceptions.user import FailedToAuthorize
 from src.application.services.card_service import CardService
+from src.application.services.group_service import GroupService
 
 from src.application.services.user_service import UserService
 from src.application.use_cases.cards import CreateCardUseCase, GetCardUseCase, UpdateCardUseCase, DeleteCardUseCase, \
@@ -13,9 +14,11 @@ from src.application.use_cases.files import DeleteFileUseCase
 from src.application.use_cases.get_file import GetFileUseCase
 from src.application.use_cases.get_user import GetUserUseCase
 from src.application.use_cases.get_user_files import GetUserFilesUseCase
+from src.application.use_cases.groups import GetGroupsUseCase, RenameGroupUseCase, DeleteGroupUseCase
 from src.domain.adapters import AuthAdapter
 from src.domain.entities import User
 from src.domain.exceptions import UserNotFound
+from src.domain.repositories.group_repository import GroupRepository
 from src.domain.repositories.user_repository import UserRepository
 from src.infrastructure.config import settings
 from src.infrastructure.rabbitmq.client import rabbitmq_client
@@ -26,6 +29,7 @@ from src.application.use_cases.upload_file import UploadFileUseCase
 from src.infrastructure.db.database import AsyncSessionFactory
 from src.infrastructure.minio import client as minio_client
 from src.infrastructure.repositories.file_repository import SqlaFileRepository
+from src.infrastructure.repositories.group_repository import SqlaGroupRepository
 from src.infrastructure.repositories.user_repository import SqlaUserRepository
 
 http_bearer = HTTPBearer()
@@ -51,6 +55,12 @@ async def get_card_repository(session: AsyncSession = Depends(get_session)) -> S
 
 async def get_user_repository(session: AsyncSession = Depends(get_session)) -> SqlaUserRepository:
     return SqlaUserRepository(session)
+
+async def get_group_repository(session: AsyncSession = Depends(get_session)) -> GroupRepository:
+    return SqlaGroupRepository(session)
+
+
+
 
 async def get_file_service(file_repo: SqlaFileRepository = Depends(get_file_repository)) -> FileService:
     return FileService(file_repo,
@@ -85,13 +95,23 @@ async def get_user_use_case(credentials: HTTPAuthorizationCredentials = Depends(
 
 
 
+async def get_group_service(group_repository: GroupRepository = Depends(get_group_repository)) -> GroupService:
+    return GroupService(group_repository)
+
+
+async def get_groups_use_case(group_service: GroupService = Depends(get_group_service)) -> GetGroupsUseCase:
+    return GetGroupsUseCase(group_service)
+
+
+async def get_rename_group_use_case(group_service: GroupService = Depends(get_group_service)) -> RenameGroupUseCase:
+    return RenameGroupUseCase(group_service)
+
+async def get_delete_group_use_case(group_service: GroupService = Depends(get_group_service)) -> DeleteGroupUseCase:
+    return DeleteGroupUseCase(group_service)
+
+
 async def get_card_service(card_repository: SqlaCardRepository = Depends(get_card_repository)) -> CardService:
     return CardService(card_repository, rabbitmq_client)
-
-async def get_create_card_use_case(card_service: CardService = Depends(get_card_service),
-                                   file_service: FileService = Depends(get_file_service)) -> CreateCardUseCase:
-    return CreateCardUseCase(card_service,
-                             file_service)
 
 async def get_card_use_case(card_service: CardService = Depends(get_card_service),
                             user_service: UserService = Depends(get_user_service)):
@@ -107,6 +127,16 @@ async def get_update_card_use_case(card_service: CardService = Depends(get_card_
 async def get_delete_card_use_case(card_service: CardService = Depends(get_card_service),
                                    user_service: UserService = Depends(get_user_service)):
     return DeleteCardUseCase(card_service, user_service)
+
+
+
+async def get_create_card_use_case(card_service: CardService = Depends(get_card_service),
+                                   file_service: FileService = Depends(get_file_service),
+                                   group_service: GroupService = Depends(get_group_service)) -> CreateCardUseCase:
+    return CreateCardUseCase(card_service,
+                             file_service,
+                             group_service)
+
 
 
 async def get_current_user(use_case: GetUserUseCase = Depends(get_user_use_case)) -> User:
