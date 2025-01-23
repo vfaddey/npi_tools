@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import io
 import uuid
 from datetime import datetime
@@ -6,7 +7,7 @@ from io import BytesIO
 
 from minio import Minio
 
-from src.application.exceptions.files import NotAFileOwner
+from src.application.exceptions.files import NotAFileOwner, FileNotFound, FileAlreadyExists
 from src.domain.entities.file import File
 from src.domain.repositories.file_repository import FileRepository
 
@@ -25,26 +26,31 @@ class FileService:
                           filename: str,
                           is_public: bool = False) -> File:
         file_id = uuid.uuid4()
-
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(
-            None,
-            self.minio_client.put_object,
-            bucket_name,
-            str(file_id),
-            io.BytesIO(file_data),
-            len(file_data),
-            'application/octet-stream'
-        )
-        file = File(
-            id=file_id,
-            user_id=user_id,
-            filename=filename,
-            uploaded_at=datetime.utcnow(),
-            is_public=is_public
-        )
-        await self.file_repo.save(file)
-        return file
+        file_hash = hashlib.sha256(file_data).hexdigest()
+        try:
+            file_ex = await self.file_repo.get_by_hash_and_user_id(file_hash, user_id)
+            return file_ex
+        except FileNotFound:
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(
+                None,
+                self.minio_client.put_object,
+                bucket_name,
+                str(file_id),
+                io.BytesIO(file_data),
+                len(file_data),
+                'application/octet-stream'
+            )
+            file = File(
+                id=file_id,
+                user_id=user_id,
+                filename=filename,
+                uploaded_at=datetime.utcnow(),
+                is_public=is_public,
+                file_hash=file_hash,
+            )
+            await self.file_repo.save(file)
+            return file
 
     async def get_by_id(self,
                         file_id: uuid.UUID,

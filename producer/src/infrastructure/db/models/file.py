@@ -15,6 +15,7 @@ class FileModel(Base):
     filename = Column(String, nullable=False)
     is_public = Column(Boolean, nullable=False, default=False)
     uploaded_at = Column(DateTime, nullable=False, default=datetime.now)
+    file_hash = Column(String(64), index=True)
 
     user = relationship('UserModel', back_populates='files')
     cards = relationship('CardModel', back_populates='file')

@@ -14,13 +14,13 @@ from src.application.use_cases.upload_file import UploadFileUseCase
 from src.domain.entities import User
 from src.presentation.api.deps import get_upload_file_use_case, get_current_user, get_file_use_case, \
     get_user_files_use_case, get_delete_file_use_case
-from src.presentation.schemas.file import UploadFileResponse
+from src.presentation.schemas.file import UploadFileResponse, FileSchema
 
 router = APIRouter(prefix='/files', tags=['files'])
 
 
 @router.get('',
-            response_model=list,
+            response_model=list[FileSchema],
             description='Получить список всех файлов пользователя')
 async def get_files(use_case: GetUserFilesUseCase = Depends(get_user_files_use_case),
                     user: User = Depends(get_current_user)):
