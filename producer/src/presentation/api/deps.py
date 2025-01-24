@@ -9,7 +9,7 @@ from src.application.services.group_service import GroupService
 
 from src.application.services.user_service import UserService
 from src.application.use_cases.cards import CreateCardUseCase, GetCardUseCase, UpdateCardUseCase, DeleteCardUseCase, \
-    GetUserCardsUseCase
+    GetUserCardsUseCase, MoveCardUseCase
 from src.application.use_cases.files import DeleteFileUseCase
 from src.application.use_cases.get_file import GetFileUseCase
 from src.application.use_cases.get_user import GetUserUseCase
@@ -127,6 +127,10 @@ async def get_user_cards_use_case(card_service: CardService = Depends(get_card_s
 async def get_update_card_use_case(card_service: CardService = Depends(get_card_service),
                                    user_service: UserService = Depends(get_user_service)):
     return UpdateCardUseCase(card_service, user_service)
+
+async def get_move_card_use_case(card_service: CardService = Depends(get_card_service),
+                                 group_service: GroupService = Depends(get_group_service)) -> MoveCardUseCase:
+    return MoveCardUseCase(card_service, group_service)
 
 async def get_delete_card_use_case(card_service: CardService = Depends(get_card_service),
                                    user_service: UserService = Depends(get_user_service)):
