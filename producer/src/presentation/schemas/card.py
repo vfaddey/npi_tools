@@ -28,7 +28,11 @@ class CardSchema(BaseModel):
     updated_at: Optional[datetime]
 
 
-class UpdateCardSchema(BaseModel):
+class UpdateCardTextSchema(BaseModel):
     id: UUID4
     markdown_text: Optional[str] = None
 
+
+class MoveCardSchema(BaseModel):
+    card_id: UUID4
+    group_id: UUID4
