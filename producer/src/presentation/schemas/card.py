@@ -32,3 +32,7 @@ class UpdateCardSchema(BaseModel):
     id: UUID4
     markdown_text: Optional[str] = None
 
+
+class CreateShareUrlSchema(BaseModel):
+    base_url: str
+    card_id: UUID4
