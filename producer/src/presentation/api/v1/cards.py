@@ -9,10 +9,11 @@ from src.application.use_cases.cards import CreateCardUseCase, GetUserCardsUseCa
     UpdateCardUseCase
 from src.domain.entities import User, Card
 from src.domain.entities.card import CardType, CARD_TYPE_TRANSLATIONS
+from src.domain.exceptions import GroupNotFound
 from src.domain.exceptions.cards import CardNotFound
 from src.presentation.api.deps import get_current_user, get_create_card_use_case, get_card_use_case, \
     get_delete_card_use_case, get_user_cards_use_case, get_update_card_use_case
-from src.presentation.schemas.card import CreateCardSchema, CardSchema, UpdateCardSchema
+from src.presentation.schemas.card import CreateCardSchema, CardSchema, UpdateCardSchema, CreateShareUrlSchema
 
 router = APIRouter(prefix="/cards", tags=["cards"])
 
@@ -31,6 +32,8 @@ async def create_card(card: CreateCardSchema,
     except (NotAFileOwner, NotACardOwner) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except FileNotFound as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except GroupNotFound as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
@@ -104,3 +107,16 @@ async def delete_card(card_id: UUID4,
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
     except NPIToolsException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post('/share')
+async def create_share_url(schema: CreateShareUrlSchema,
+                           user: User = Depends(get_current_user),
+                           ):
+    ...
+
+
+@router.get('/share')
+async def get_card_by_sharing_code(code: str,
+                                   ):
+    ...
