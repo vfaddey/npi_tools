@@ -66,6 +66,24 @@ class GetUserCardsUseCase:
         return cards
 
 
+class ShareCardUseCase:
+    def __init__(self,
+                 card_service: CardService,
+                 file_service: FileService,
+                 group_service: GroupService):
+        self._card_service = card_service
+        self._file_service = file_service
+        self._group_service = group_service
+
+    async def execute(self, card_id: UUID, user_id: UUID) -> Card:
+        card = await self._card_service.get_by_id(card_id)
+        if card.user_id != user_id:
+            raise NotACardOwner('You do not have permission to access this card.')
+        file, _ = await self._file_service.get_by_id(card.file_id, card_id, BUCKET_NAME)
+        
+
+
+
 class UpdateCardUseCase:
     def __init__(self,
                  card_service: CardService,
