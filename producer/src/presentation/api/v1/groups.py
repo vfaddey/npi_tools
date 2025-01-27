@@ -42,7 +42,7 @@ async def get_groups(user: User = Depends(get_current_user),
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.patch('/{group_id}/rename',
+@router.patch('/rename',
               description='Переименовать название карточки (до 100 символов)')
 async def rename_group(schema: RenameGroupSchema,
                        user: User = Depends(get_current_user),

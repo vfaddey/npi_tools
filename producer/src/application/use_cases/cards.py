@@ -26,7 +26,7 @@ class CreateCardUseCase:
                                                 user_id,
                                                 BUCKET_NAME)
             if not card.group_id:
-                new_group = Group(name='#1', user_id=user_id)
+                new_group = Group(name=f'Группа {card.card_type}', user_id=user_id)
                 new_group = await self._group_service.create(new_group)
                 card.group_id = new_group.id
             else:
@@ -96,6 +96,25 @@ class UpdateCardUseCase:
         if card_ex.user_id != user_id:
             raise NotACardOwner('You do not have permission to access this card.')
         card_ex.markdown_text = card.markdown_text
+        updated = await self._card_service.update(card_ex)
+        return updated
+
+
+class MoveCardUseCase:
+    def __init__(self,
+                 card_service: CardService,
+                 group_service: GroupService):
+        self._card_service = card_service
+        self._group_service = group_service
+
+    async def execute(self, card_id: UUID, new_group_id: UUID, user_id: UUID) -> Card:
+        card_ex = await self._card_service.get_by_id(card_id)
+        group_new = await self._group_service.get_by_id(new_group_id)
+        if not card_ex.user_id == user_id:
+            raise NotACardOwner('You do not have permission to access this card.')
+        if not group_new.user_id == user_id:
+            raise NotAGroupOwner('You do not have permission to access this card.')
+        card_ex.group_id = group_new.id
         updated = await self._card_service.update(card_ex)
         return updated
 
