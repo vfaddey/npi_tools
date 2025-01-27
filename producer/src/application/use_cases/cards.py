@@ -26,7 +26,7 @@ class CreateCardUseCase:
                                                 user_id,
                                                 BUCKET_NAME)
             if not card.group_id:
-                new_group = Group(name='#1', user_id=user_id)
+                new_group = Group(name=f'Группа {card.card_type}', user_id=user_id)
                 new_group = await self._group_service.create(new_group)
                 card.group_id = new_group.id
             else:

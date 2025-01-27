@@ -25,6 +25,7 @@ CARD_TYPE_TRANSLATIONS = {
 class Card:
     file_id: Optional[UUID] = None
     card_type: Optional[str] = None
+    name: str = ''
     card_type_translation: Optional[str] = None
     id: Optional[UUID] = None
     group_id: Optional[UUID] = None
