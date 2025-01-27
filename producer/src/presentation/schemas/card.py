@@ -10,11 +10,13 @@ from src.domain.entities.card import CardType
 class CreateCardSchema(BaseModel):
     file_id: UUID4
     card_type: CardType
+    name: str
     group_id: Optional[UUID4] = None
 
 
 class CardSchema(BaseModel):
     id: UUID4
+    name: str
     file_id: UUID4
     card_type: CardType
     card_type_translation: Optional[str]
