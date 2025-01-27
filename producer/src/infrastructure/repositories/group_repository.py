@@ -100,6 +100,7 @@ class SqlaGroupRepository(GroupRepository):
     def __to_card_entity(self, card_db: CardModel) -> Card:
         return Card(id=card_db.id,
                     card_type=card_db.card_type,
+                    name=card_db.name,
                     card_type_translation=card_db.card_type_translation,
                     user_id=card_db.user_id,
                     status=card_db.status,

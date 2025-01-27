@@ -17,7 +17,6 @@ class SqlaCardRepository(CardRepository):
 
     async def create(self, card: Card) -> Card:
         card_db = CardModel(**card.dump())
-        print(card.dump())
         try:
             self._session.add(card_db)
             await self._session.commit()
@@ -72,6 +71,7 @@ class SqlaCardRepository(CardRepository):
     def __to_entity(self, card_db: CardModel) -> Card:
         return Card(id=card_db.id,
                     card_type=card_db.card_type,
+                    name=card_db.name,
                     card_type_translation=card_db.card_type_translation,
                     user_id=card_db.user_id,
                     status=card_db.status,
