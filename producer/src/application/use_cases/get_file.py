@@ -14,3 +14,12 @@ class GetFileUseCase:
                                                         user_id,
                                                         BUCKET_NAME)
         return file, data
+
+
+class GetPublicFilesUseCase:
+    def __init__(self,
+                 file_service: FileService):
+        self._file_service = file_service
+
+    async def execute(self):
+        return await self._file_service.get_public_files()
