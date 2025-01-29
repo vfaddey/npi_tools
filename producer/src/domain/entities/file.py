@@ -12,6 +12,7 @@ class File:
     uploaded_at: datetime
     is_public: bool
     user_id: UUID
+    description: Optional[str] = ''
     file_hash: Optional[str] = None
 
     def dump(self):

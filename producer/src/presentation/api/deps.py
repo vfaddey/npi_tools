@@ -9,9 +9,9 @@ from src.application.services.group_service import GroupService
 
 from src.application.services.user_service import UserService
 from src.application.use_cases.cards import CreateCardUseCase, GetCardUseCase, UpdateCardUseCase, DeleteCardUseCase, \
-    GetUserCardsUseCase, MoveCardUseCase
+    GetUserCardsUseCase, MoveCardUseCase, CalculateCardUseCase
 from src.application.use_cases.files import DeleteFileUseCase
-from src.application.use_cases.get_file import GetFileUseCase
+from src.application.use_cases.get_file import GetFileUseCase, GetPublicFilesUseCase
 from src.application.use_cases.get_user import GetUserUseCase
 from src.application.use_cases.get_user_files import GetUserFilesUseCase
 from src.application.use_cases.groups import GetGroupsUseCase, RenameGroupUseCase, DeleteGroupUseCase, \
@@ -26,7 +26,7 @@ from src.infrastructure.rabbitmq.client import rabbitmq_client
 from src.infrastructure.repositories.card_repository import SqlaCardRepository
 from src.infrastructure.adapters import NPIAuthAdapter
 from src.application.services.file_service import FileService
-from src.application.use_cases.upload_file import UploadFileUseCase
+from src.application.use_cases.upload_file import UploadFileUseCase, UploadPublicFileUseCase
 from src.infrastructure.db.database import AsyncSessionFactory
 from src.infrastructure.minio import client as minio_client
 from src.infrastructure.repositories.file_repository import SqlaFileRepository
@@ -69,6 +69,12 @@ async def get_file_service(file_repo: SqlaFileRepository = Depends(get_file_repo
 
 async def get_upload_file_use_case(file_service: FileService = Depends(get_file_service)) -> UploadFileUseCase:
     return UploadFileUseCase(file_service)
+
+async def get_upload_public_file_use_case(file_service: FileService = Depends(get_file_service)) -> UploadPublicFileUseCase:
+    return UploadPublicFileUseCase(file_service)
+
+async def get_public_files_use_case(file_service: FileService = Depends(get_file_service)) -> GetPublicFilesUseCase:
+    return GetPublicFilesUseCase(file_service)
 
 async def get_file_use_case(file_service: FileService = Depends(get_file_service)) -> GetFileUseCase:
     return GetFileUseCase(file_service)
@@ -125,8 +131,11 @@ async def get_user_cards_use_case(card_service: CardService = Depends(get_card_s
     return GetUserCardsUseCase(card_service)
 
 async def get_update_card_use_case(card_service: CardService = Depends(get_card_service),
-                                   user_service: UserService = Depends(get_user_service)):
-    return UpdateCardUseCase(card_service, user_service)
+                                   file_service: FileService = Depends(get_file_service)):
+    return UpdateCardUseCase(card_service, file_service)
+
+async def get_calculate_card_use_case(card_service: CardService = Depends(get_card_service)) -> CalculateCardUseCase:
+    return CalculateCardUseCase(card_service)
 
 async def get_move_card_use_case(card_service: CardService = Depends(get_card_service),
                                  group_service: GroupService = Depends(get_group_service)) -> MoveCardUseCase:

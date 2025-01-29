@@ -13,6 +13,7 @@ class FileModel(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
     filename = Column(String, nullable=False)
+    description = Column(String, nullable=False, server_default='', default='')
     is_public = Column(Boolean, nullable=False, default=False)
     uploaded_at = Column(DateTime, nullable=False, default=datetime.now)
     file_hash = Column(String(64), index=True)

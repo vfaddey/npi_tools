@@ -18,6 +18,10 @@ class FileRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_public_files(self):
+        raise NotImplementedError
+
+    @abstractmethod
     async def delete(self, file_id: UUID):
         raise NotImplementedError
 

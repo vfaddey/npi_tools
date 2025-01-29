@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from src.domain.entities import Card
+from src.domain.entities import Card, CardStatus
 from src.domain.repositories.card_repository import CardRepository
 from src.infrastructure.rabbitmq.client import RabbitMQClient
 
@@ -14,8 +14,14 @@ class CardService:
 
     async def create(self, card: Card) -> Card:
         created = await self._card_repository.create(card)
-        await self._rabbitmq_client.publish_card(created)
+        # await self._rabbitmq_client.publish_card(created)
         return created
+
+    async def start_calculation(self, card: Card) -> Card:
+        card.status = CardStatus.PENDING
+        updated = await self._card_repository.update(card)
+        await self._rabbitmq_client.publish_card(updated)
+        return updated
 
     async def get_by_id(self, card_id: UUID) -> Card:
         card = await self._card_repository.get(card_id)

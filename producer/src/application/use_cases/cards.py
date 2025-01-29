@@ -2,6 +2,7 @@ from typing import List
 from uuid import UUID
 
 from src.application.exceptions.cards import NotACardOwner
+from src.application.exceptions.files import FileNotFound
 from src.application.exceptions.groups import NotAGroupOwner
 from src.application.services.card_service import CardService
 from src.application.services.file_service import FileService
@@ -22,9 +23,6 @@ class CreateCardUseCase:
 
     async def execute(self, card: Card, user_id: UUID) -> Card:
         try:
-            file, _ = await self._file_service.get_by_id(card.file_id,
-                                                user_id,
-                                                BUCKET_NAME)
             if not card.group_id:
                 new_group = Group(name=f'Группа {card.card_type}', user_id=user_id)
                 new_group = await self._group_service.create(new_group)
@@ -87,15 +85,23 @@ class ShareCardUseCase:
 class UpdateCardUseCase:
     def __init__(self,
                  card_service: CardService,
-                 user_service: UserService):
+                 file_service: FileService):
         self._card_service = card_service
-        self._user_service = user_service
+        self._file_service = file_service
 
     async def execute(self, card: Card, user_id: UUID) -> Card:
         card_ex = await self._card_service.get_by_id(card.id)
         if card_ex.user_id != user_id:
             raise NotACardOwner('You do not have permission to access this card.')
-        card_ex.markdown_text = card.markdown_text
+        if card.name:
+            card_ex.name = card.name
+        if card.markdown_text:
+            card_ex.markdown_text = card.markdown_text
+        if card.file_id:
+            await self._file_service.get_by_id(card.file_id,
+                                                user_id,
+                                                BUCKET_NAME)
+            card_ex.file_id = card.file_id
         updated = await self._card_service.update(card_ex)
         return updated
 
@@ -132,3 +138,22 @@ class DeleteCardUseCase:
             raise NotACardOwner('You do not have permission to access this card.')
         deleted = await self._card_service.delete(card_id)
         return deleted
+
+
+class CalculateCardUseCase:
+    def __init__(self,
+                 card_service: CardService):
+        self._card_service = card_service
+
+    async def execute(self, card_id: UUID, user_id: UUID) -> Card:
+        try:
+            card_ex = await self._card_service.get_by_id(card_id)
+            if not card_ex.file_id:
+                raise FileNotFound('There is no file provided to calculate this card.')
+            if card_ex.user_id != user_id:
+                raise NotACardOwner('You do not have permission to access this card.')
+            result = await self._card_service.start_calculation(card_ex)
+            return result
+        except Exception as e:
+            print(e)
+            raise e

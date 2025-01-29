@@ -35,7 +35,6 @@ class RabbitMQClient:
                 json.dumps(data).encode(),
                 delivery_mode=DeliveryMode.PERSISTENT
             )
-            print(self.queue)
             await self.channel.default_exchange.publish(
                 message,
                 routing_key=self.queue
