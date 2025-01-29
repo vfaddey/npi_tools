@@ -24,7 +24,8 @@ class FileService:
                           bucket_name: str,
                           file_data: bytes,
                           filename: str,
-                          is_public: bool = False) -> File:
+                          is_public: bool = False,
+                          description: str = '') -> File:
         file_id = uuid.uuid4()
         file_hash = hashlib.sha256(file_data).hexdigest()
         try:
@@ -45,6 +46,7 @@ class FileService:
                 id=file_id,
                 user_id=user_id,
                 filename=filename,
+                description=description,
                 uploaded_at=datetime.utcnow(),
                 is_public=is_public,
                 file_hash=file_hash,
@@ -73,6 +75,9 @@ class FileService:
     async def get_user_files(self, user_id: uuid.UUID):
         files = await self.file_repo.get_files_by_user(user_id)
         return files
+
+    async def get_public_files(self):
+        return await self.file_repo.get_public_files()
 
     async def delete_by_id(self,
                            file_id: uuid.UUID,
