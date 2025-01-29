@@ -39,3 +39,8 @@ class UpdateCardSchema(BaseModel):
 class CreateShareUrlSchema(BaseModel):
     base_url: str
     card_id: UUID4
+
+
+class MoveCardSchema(BaseModel):
+    card_id: UUID4
+    group_id: UUID4

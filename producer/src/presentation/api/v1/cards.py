@@ -16,7 +16,7 @@ from src.presentation.api.deps import get_current_user, get_create_card_use_case
     get_delete_card_use_case, get_user_cards_use_case, get_update_card_use_case, get_move_card_use_case, \
     get_calculate_card_use_case
 from src.presentation.schemas.card import CreateCardSchema, CardSchema, \
-    UpdateCardSchema, CreateShareUrlSchema
+    UpdateCardSchema, CreateShareUrlSchema, MoveCardSchema
 
 router = APIRouter(prefix="/cards", tags=["cards"])
 
