@@ -7,14 +7,15 @@ from src.application.exceptions.cards import NotACardOwner
 from src.application.exceptions.files import NotAFileOwner, FileNotFound
 from src.application.exceptions.groups import NotAGroupOwner
 from src.application.use_cases.cards import CreateCardUseCase, GetUserCardsUseCase, GetCardUseCase, DeleteCardUseCase, \
-    UpdateCardUseCase, MoveCardUseCase
+    UpdateCardUseCase, MoveCardUseCase, CalculateCardUseCase
 from src.domain.entities import User, Card
 from src.domain.entities.card import CardType, CARD_TYPE_TRANSLATIONS
 from src.domain.exceptions import GroupNotFound
 from src.domain.exceptions.cards import CardNotFound
 from src.presentation.api.deps import get_current_user, get_create_card_use_case, get_card_use_case, \
-    get_delete_card_use_case, get_user_cards_use_case, get_update_card_use_case, get_move_card_use_case
-from src.presentation.schemas.card import CreateCardSchema, CardSchema, UpdateCardTextSchema, MoveCardSchema
+    get_delete_card_use_case, get_user_cards_use_case, get_update_card_use_case, get_move_card_use_case, \
+    get_calculate_card_use_case
+from src.presentation.schemas.card import CreateCardSchema, CardSchema, MoveCardSchema, UpdateCardSchema
 
 router = APIRouter(prefix="/cards", tags=["cards"])
 
@@ -75,10 +76,24 @@ async def get_card(card_id: UUID4,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
+@router.post('/calculate/{card_id}')
+async def calculate_card(card_id: UUID4,
+                         user: User = Depends(get_current_user),
+                         use_case: CalculateCardUseCase = Depends(get_calculate_card_use_case)):
+    try:
+        result = await use_case.execute(card_id, user.id)
+        return CardSchema(**result.dump())
+    except NotACardOwner as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except (CardNotFound, FileNotFound) as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except NPIToolsException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 @router.patch('',
               response_model=CardSchema,
-              description='Обновить текст карточки')
-async def update_card(card: UpdateCardTextSchema,
+              description='Обновить карточку')
+async def update_card(card: UpdateCardSchema,
                       user: User = Depends(get_current_user),
                       use_case: UpdateCardUseCase = Depends(get_update_card_use_case)):
     try:
