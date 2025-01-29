@@ -8,7 +8,6 @@ from src.domain.entities.card import CardType
 
 
 class CreateCardSchema(BaseModel):
-    file_id: UUID4
     card_type: CardType
     name: str
     group_id: Optional[UUID4] = None
@@ -17,7 +16,7 @@ class CreateCardSchema(BaseModel):
 class CardSchema(BaseModel):
     id: UUID4
     name: str
-    file_id: UUID4
+    file_id: Optional[UUID4]
     card_type: CardType
     card_type_translation: Optional[str]
     markdown_text: str
@@ -30,9 +29,11 @@ class CardSchema(BaseModel):
     updated_at: Optional[datetime]
 
 
-class UpdateCardTextSchema(BaseModel):
+class UpdateCardSchema(BaseModel):
     id: UUID4
+    name: Optional[str] = None
     markdown_text: Optional[str] = None
+    file_id: Optional[UUID4] = None
 
 
 class MoveCardSchema(BaseModel):

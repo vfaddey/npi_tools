@@ -6,6 +6,7 @@ from uuid import UUID
 
 
 class CardStatus(str, Enum):
+    CREATED = "created"
     PENDING = "pending"
     FAILED = "failed"
     COMPLETE = "complete"
@@ -23,11 +24,11 @@ CARD_TYPE_TRANSLATIONS = {
 
 @dataclass
 class Card:
-    file_id: Optional[UUID] = None
-    card_type: Optional[str] = None
     name: str = ''
-    card_type_translation: Optional[str] = None
     id: Optional[UUID] = None
+    file_id: Optional[UUID] = None
+    card_type: Optional[CardType] = None
+    card_type_translation: Optional[str] = None
     group_id: Optional[UUID] = None
     markdown_text: Optional[str] = None
     status: Optional[CardStatus] = None
@@ -39,8 +40,6 @@ class Card:
 
     def __post_init__(self):
         self.card_type_translation = CARD_TYPE_TRANSLATIONS.get(self.card_type)
-        if not self.card_type_translation:
-            raise ValueError(f"Неизвестный тип карточки: {self.card_type}")
 
     def dump(self):
         return asdict(self)
