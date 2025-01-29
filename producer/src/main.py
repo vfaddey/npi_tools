@@ -24,8 +24,8 @@ async def shutdown():
 
 app.include_router(files_router)
 app.include_router(cards_router)
-app.include_router(users_router)
 app.include_router(groups_router)
+app.include_router(users_router)
 
 
 app.add_middleware(

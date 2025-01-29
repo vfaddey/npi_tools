@@ -18,6 +18,7 @@ class SqlaFileRepository(FileRepository):
             id=file.id,
             user_id=file.user_id,
             filename=file.filename,
+            description=file.description,
             is_public=file.is_public,
             uploaded_at=file.uploaded_at,
             file_hash=file.file_hash,
@@ -35,6 +36,12 @@ class SqlaFileRepository(FileRepository):
         stmt = select(FileModel).where(FileModel.user_id == user_id)
         result = await self._session.execute(stmt)
         files_db = result.unique().scalars().all()
+        return [self.__to_entity(f) for f in files_db]
+
+    async def get_public_files(self):
+        stmt = select(FileModel).where(FileModel.is_public == True)
+        result = await self._session.execute(stmt)
+        files_db = result.scalars().all()
         return [self.__to_entity(f) for f in files_db]
 
     async def get_by_hash_and_user_id(self, file_hash: str, user_id: UUID) -> File:
@@ -66,6 +73,7 @@ class SqlaFileRepository(FileRepository):
         return File(id=file_db.id,
                     user_id=file_db.user_id,
                     filename=file_db.filename,
+                    description=file_db.description,
                     is_public=file_db.is_public,
                     uploaded_at=file_db.uploaded_at,
                     file_hash=file_db.file_hash)
