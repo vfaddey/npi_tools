@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import UUID4
 from starlette import status
 
@@ -34,9 +36,11 @@ async def create_group(group: CreateGroupSchema,
             response_model=list[GroupSchema],
             description='Получить список групп карточек пользователя')
 async def get_groups(user: User = Depends(get_current_user),
+                     group_ids: Optional[list[UUID4]] = Query(None, description="Список ID групп для фильтрации"),
                      use_case: GetGroupsUseCase = Depends(get_groups_use_case)):
     try:
-        result = await use_case.execute(user.id)
+        result = await use_case.execute(user.id,
+                                        group_ids=group_ids)
         return result
     except NPIToolsException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

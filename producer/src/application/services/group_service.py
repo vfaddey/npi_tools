@@ -15,6 +15,9 @@ class GroupService:
     async def get_by_id(self, group_id: UUID) -> Group:
         return await self.__repository.get(group_id)
 
+    async def get_by_ids(self, group_ids: list[UUID]) -> list[Group]:
+        return await self.__repository.get_by_ids(group_ids)
+
     async def get_by_user_id(self, user_id: UUID) -> list[Group]:
         return await self.__repository.get_by_user_id(user_id)
 

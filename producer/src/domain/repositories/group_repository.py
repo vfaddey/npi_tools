@@ -17,6 +17,11 @@ class GroupRepository(ABC):
 
 
     @abstractmethod
+    async def get_by_ids(self, group_ids: list[UUID]) -> list[Group]:
+        raise NotImplementedError
+
+
+    @abstractmethod
     async def get_by_user_id(self, user_id: UUID) -> list[Group]:
         raise NotImplementedError
 

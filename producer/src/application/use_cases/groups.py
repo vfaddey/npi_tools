@@ -22,8 +22,13 @@ class GetGroupsUseCase:
         self.group_service = group_service
 
 
-    async def execute(self, user_id: UUID) -> list[Group]:
-        return await self.group_service.get_by_user_id(user_id)
+    async def execute(self,
+                      user_id: UUID,
+                      group_ids: list[UUID] = None) -> list[Group]:
+        if not group_ids:
+            return await self.group_service.get_by_user_id(user_id)
+        return await self.group_service.get_by_ids(group_ids)
+
 
 
 class DeleteGroupUseCase:

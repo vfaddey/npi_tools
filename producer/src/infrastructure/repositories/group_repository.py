@@ -34,6 +34,12 @@ class SqlaGroupRepository(GroupRepository):
             raise GroupNotFound(f'No such group with id {group_id}')
         return self.__to_entity(group_db)
 
+    async def get_by_ids(self, group_ids: list[UUID]) -> list[Group]:
+        stmt = select(GroupModel).where(GroupModel.id.in_(group_ids))
+        result = await self._session.execute(stmt)
+        groups_db = result.unique().scalars().all()
+        return [self.__to_entity(g) for g in groups_db]
+
     async def get_by_user_id(self, user_id: UUID) -> list[Group]:
         stmt = select(GroupModel).where(GroupModel.user_id == user_id)
         result = await self._session.execute(stmt)
