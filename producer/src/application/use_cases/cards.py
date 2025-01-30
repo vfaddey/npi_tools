@@ -208,7 +208,7 @@ class CopyBySharingCodeUseCase:
                 card_ex.file_id = copied_file.id
 
             if card_ex.result:
-                assets = await self.__get_result_assets(card_ex.result.get('assets', []), user_id)
+                assets = await self.__get_result_assets(card_ex.result.get('assets', []), card_ex.user_id)
                 card_ex.result['assets'] = []
                 for asset in assets:
                     asset_copy = await self._file_service.upload_file(user_id, BUCKET_NAME, asset[1], asset[0].filename)
