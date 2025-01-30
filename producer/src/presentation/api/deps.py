@@ -9,7 +9,7 @@ from src.application.services.group_service import GroupService
 
 from src.application.services.user_service import UserService
 from src.application.use_cases.cards import CreateCardUseCase, GetCardUseCase, UpdateCardUseCase, DeleteCardUseCase, \
-    GetUserCardsUseCase, MoveCardUseCase, CalculateCardUseCase
+    GetUserCardsUseCase, MoveCardUseCase, CalculateCardUseCase, CreateShareURlUseCase, CopyBySharingCodeUseCase
 from src.application.use_cases.files import DeleteFileUseCase
 from src.application.use_cases.get_file import GetFileUseCase, GetPublicFilesUseCase
 from src.application.use_cases.get_user import GetUserUseCase
@@ -154,7 +154,13 @@ async def get_create_card_use_case(card_service: CardService = Depends(get_card_
                              file_service,
                              group_service)
 
+async def get_create_sharing_url_use_case(card_service: CardService = Depends(get_card_service)) -> CreateShareURlUseCase:
+    return CreateShareURlUseCase(card_service)
 
+async def get_copy_by_sharing_code_use_case(card_service: CardService = Depends(get_card_service),
+                                            file_service: FileService = Depends(get_file_service),
+                                            group_service: GroupService = Depends(get_group_service)) -> CopyBySharingCodeUseCase:
+    return CopyBySharingCodeUseCase(card_service, group_service, file_service)
 
 async def get_current_user(use_case: GetUserUseCase = Depends(get_user_use_case)) -> User:
     credentials_exception = HTTPException(

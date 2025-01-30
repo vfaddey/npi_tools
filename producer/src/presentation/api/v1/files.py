@@ -1,3 +1,4 @@
+from io import BytesIO
 from typing import Optional
 from urllib.parse import quote
 
@@ -66,11 +67,11 @@ async def get_file_by_id(file_id: UUID4,
         encoded_filename = quote(file.filename)
         if file.filename.endswith('.svg'):
             return StreamingResponse(
-                data,
+                BytesIO(data),
                 media_type='image/svg+xml',
             )
         return StreamingResponse(
-            data,
+            BytesIO(data),
             media_type='application/octet-stream',
             headers={
                 "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"

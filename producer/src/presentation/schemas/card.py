@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel, UUID4, HttpUrl
 
 from src.domain.entities import CardStatus
 from src.domain.entities.card import CardType
@@ -37,8 +37,17 @@ class UpdateCardSchema(BaseModel):
 
 
 class CreateShareUrlSchema(BaseModel):
-    base_url: str
+    base_url: HttpUrl
     card_id: UUID4
+
+
+class ShareUrlSchema(BaseModel):
+    url: HttpUrl
+    code: str
+    card_id: UUID4
+
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
 
 class MoveCardSchema(BaseModel):
