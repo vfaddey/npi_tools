@@ -28,3 +28,35 @@ class CardModel(Base):
     group = relationship("GroupModel", back_populates="cards")
     user = relationship("UserModel", back_populates="cards")
     file = relationship("FileModel", back_populates="cards")
+    sharing_url = relationship("SharingURLModel", back_populates="card")
+    copies = relationship("CardCopyModel", back_populates="card")
+
+
+class SharingURLModel(Base):
+    __tablename__ = "sharing_urls"
+
+    card_id = Column(UUID(as_uuid=True), ForeignKey("cards.id"), nullable=False, index=True)
+    base_url = Column(String, nullable=False)
+    code = Column(String, nullable=False, unique=True, index=True, primary_key=True)
+    url = Column(String, nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    card = relationship("CardModel", back_populates="sharing_url", lazy="joined")
+    user = relationship("UserModel", back_populates="sharing_urls")
+
+
+class CardCopyModel(Base):
+    __tablename__ = "card_copies"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    card_id = Column(UUID(as_uuid=True), ForeignKey("cards.id"), nullable=False, index=True)
+    copier_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    card = relationship("CardModel", back_populates="copies")
+    user = relationship("UserModel")
