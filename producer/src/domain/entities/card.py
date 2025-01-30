@@ -43,3 +43,32 @@ class Card:
 
     def dump(self):
         return asdict(self)
+
+
+@dataclass
+class SharingURL:
+    card_id: UUID
+    base_url: str
+    code: str
+    url: Optional[str]
+    user_id: Optional[UUID] = None
+
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    card: Optional[Card] = None
+
+    def dump(self):
+        return {k: v for k, v in asdict(self).items() if k != "card"}
+
+
+@dataclass
+class CardCopy:
+    card_id: UUID
+    copier_id: UUID
+
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    def dump(self):
+        return asdict(self)

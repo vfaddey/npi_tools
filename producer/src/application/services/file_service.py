@@ -63,10 +63,12 @@ class FileService:
             raise NotAFileOwner('You have not permission to access this file')
         try:
             loop = asyncio.get_event_loop()
-            data = await loop.run_in_executor(None,
+            response = await loop.run_in_executor(None,
                                        self.minio_client.get_object,
                                        bucket_name,
                                        str(file_id))
+            data = await loop.run_in_executor(None, response.read)
+            response.close()
             return file, data
         except Exception as e:
             print(e)
