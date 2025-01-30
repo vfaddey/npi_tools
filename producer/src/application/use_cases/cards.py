@@ -216,7 +216,7 @@ class CopyBySharingCodeUseCase:
                         {
                             'filename': asset[0].filename,
                             'asset_type': asset[2],
-                            'file_id': asset_copy.id
+                            'file_id': str(asset_copy.id)
                         }
                     )
             card_ex.user_id = user_id
