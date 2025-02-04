@@ -36,6 +36,7 @@ class CreateCardUseCase:
                     raise NotAGroupOwner('You are not allowed to create card in this group')
                 card.group_id = group_ex.id
             card.user_id = user_id
+            card.author_id = user_id
             result = await self._card_service.create(card)
             return result
         except Exception as e:
