@@ -3,12 +3,13 @@ from uuid import UUID
 from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError
 
+from src.domain.entities import User
 from src.domain.entities.card import Card
 from src.domain.exceptions import GroupNotFound
 from src.infrastructure.db.models.card import CardModel
 from src.domain.entities.group import Group
 from src.domain.repositories.group_repository import GroupRepository
-from src.infrastructure.db.models import GroupModel
+from src.infrastructure.db.models import GroupModel, UserModel
 
 
 class SqlaGroupRepository(GroupRepository):
@@ -104,15 +105,36 @@ class SqlaGroupRepository(GroupRepository):
                      updated_at=group_db.updated_at)
 
     def __to_card_entity(self, card_db: CardModel) -> Card:
+        if not card_db:
+            return None
+        user_db = card_db.user
+        user = self.__to_user_entity(user_db)
+        author_db = card_db.author
+        author = self.__to_user_entity(author_db)
         return Card(id=card_db.id,
                     card_type=card_db.card_type,
                     name=card_db.name,
                     card_type_translation=card_db.card_type_translation,
                     user_id=card_db.user_id,
+                    author_id=card_db.author_id,
                     status=card_db.status,
                     markdown_text=card_db.markdown_text,
-                    group_id=card_db.group_id,
                     file_id=card_db.file_id,
+                    group_id=card_db.group_id,
                     created_at=card_db.created_at,
                     updated_at=card_db.updated_at,
-                    result=card_db.result)
+                    result=card_db.result,
+                    user=user,
+                    author=author)
+
+
+    def __to_user_entity(self, user_db: UserModel) -> User:
+        return User(id=user_db.id,
+                    first_name=user_db.first_name,
+                    last_name=user_db.last_name,
+                    email=user_db.email,
+                    email_verified=user_db.email_verified,
+                    phone_number=user_db.phone_number,
+                    phone_number_verified=user_db.phone_number_verified,
+                    created_at=user_db.created_at,
+                    updated_at=user_db.updated_at)

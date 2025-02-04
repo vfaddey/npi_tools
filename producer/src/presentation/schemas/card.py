@@ -5,6 +5,7 @@ from pydantic import BaseModel, UUID4, HttpUrl
 
 from src.domain.entities import CardStatus
 from src.domain.entities.card import CardType
+from src.presentation.schemas.user import UserSchemaShort
 
 
 class CreateCardSchema(BaseModel):
@@ -22,8 +23,11 @@ class CardSchema(BaseModel):
     markdown_text: str
     status: CardStatus
     user_id: UUID4
+    author_id: Optional[UUID4] = None
     group_id: UUID4
     result: Optional[dict] = {}
+    user: Optional[UserSchemaShort] = None
+    author: Optional[UserSchemaShort] = None
 
     created_at: Optional[datetime]
     updated_at: Optional[datetime]

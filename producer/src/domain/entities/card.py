@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict, Field, field
+from dataclasses import dataclass, asdict, field
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -33,7 +33,10 @@ class Card:
     markdown_text: Optional[str] = None
     status: Optional[CardStatus] = None
     user_id: Optional[UUID] = None
+    author_id: Optional[UUID] = None
     result: Optional[dict] = field(default_factory=dict)
+    user: Optional['User'] = None
+    author: Optional['User'] = None
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -41,8 +44,12 @@ class Card:
     def __post_init__(self):
         self.card_type_translation = CARD_TYPE_TRANSLATIONS.get(self.card_type)
 
-    def dump(self):
-        return asdict(self)
+    def dump(self, exclude: Optional[set] = None) -> dict:
+        data = asdict(self)
+        if exclude:
+            for key in exclude:
+                data.pop(key, None)
+        return data
 
 
 @dataclass

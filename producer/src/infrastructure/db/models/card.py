@@ -20,13 +20,25 @@ class CardModel(Base):
     file_id = Column(UUID(as_uuid=True), ForeignKey("files.id", ondelete="CASCADE"))
     group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    author_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
     result = Column(JSON, default={}, nullable=False)
 
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     group = relationship("GroupModel", back_populates="cards")
-    user = relationship("UserModel", back_populates="cards")
+    user = relationship(
+        "UserModel",
+        back_populates="cards",
+        lazy="joined",
+        foreign_keys=[user_id]
+    )
+    author = relationship(
+        "UserModel",
+        back_populates="cards",
+        lazy="joined",
+        foreign_keys=[author_id]
+    )
     file = relationship("FileModel", back_populates="cards")
     sharing_url = relationship("SharingURLModel", back_populates="card")
     copies = relationship("CardCopyModel", back_populates="card")

@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, UUID4
 
 
-class UserSchema(BaseModel):
+class UserSchemaFull(BaseModel):
     id: UUID4
     first_name: str
     last_name: str
@@ -14,3 +14,9 @@ class UserSchema(BaseModel):
     phone_number_verified: bool
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+
+class UserSchemaShort(BaseModel):
+    id: UUID4
+    first_name: str
+    last_name: str
