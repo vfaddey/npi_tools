@@ -6,11 +6,11 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.testing.plugin.plugin_base import options
 from typing_extensions import override
 
-from src.domain.entities import Card
+from src.domain.entities import Card, User
 from src.domain.entities.card import Card, SharingURL, CardCopy
 from src.domain.exceptions.cards import CardNotFound, SharingUrlNotFound, CardCopyNotFound
 from src.domain.repositories.card_repository import CardRepository
-from src.infrastructure.db.models import CardModel
+from src.infrastructure.db.models import CardModel, UserModel
 from src.infrastructure.db.models.card import SharingURLModel, CardCopyModel
 
 
@@ -20,7 +20,7 @@ class SqlaCardRepository(CardRepository):
 
     @override
     async def create(self, card: Card) -> Card:
-        card_db = CardModel(**card.dump())
+        card_db = CardModel(**card.dump(exclude={'user', 'author'}))
         try:
             self._session.add(card_db)
             await self._session.commit()
@@ -131,18 +131,25 @@ class SqlaCardRepository(CardRepository):
     def __to_entity(self, card_db: CardModel) -> Card | None:
         if not card_db:
             return None
+        user_db = card_db.user
+        user = self.__to_user_entity(user_db)
+        author_db = card_db.author
+        author = self.__to_user_entity(author_db)
         return Card(id=card_db.id,
                     card_type=card_db.card_type,
                     name=card_db.name,
                     card_type_translation=card_db.card_type_translation,
                     user_id=card_db.user_id,
+                    author_id=card_db.author_id,
                     status=card_db.status,
                     markdown_text=card_db.markdown_text,
                     file_id=card_db.file_id,
                     group_id=card_db.group_id,
                     created_at=card_db.created_at,
                     updated_at=card_db.updated_at,
-                    result=card_db.result)
+                    result=card_db.result,
+                    user=user,
+                    author=author)
 
     def __to_sharing_url_entity(self, sharing_url_db: SharingURLModel) -> SharingURL:
         card = self.__to_entity(sharing_url_db.card)
@@ -160,3 +167,16 @@ class SqlaCardRepository(CardRepository):
                         copier_id=card_copy_db.copier_id,
                         created_at=card_copy_db.created_at,
                         updated_at=card_copy_db.updated_at)
+
+    def __to_user_entity(self, user_db: UserModel) -> User:
+        if not user_db:
+            return None
+        return User(id=user_db.id,
+                    first_name=user_db.first_name,
+                    last_name=user_db.last_name,
+                    email=user_db.email,
+                    email_verified=user_db.email_verified,
+                    phone_number=user_db.phone_number,
+                    phone_number_verified=user_db.phone_number_verified,
+                    created_at=user_db.created_at,
+                    updated_at=user_db.updated_at)
