@@ -22,6 +22,6 @@ class UserModel(Base):
     admin = Column(Boolean, nullable=False, default=False)
 
     files = relationship("FileModel", back_populates="user")
-    cards = relationship("CardModel", back_populates="user")
+    cards = relationship("CardModel", back_populates="user", foreign_keys='CardModel.user_id')
     groups = relationship("GroupModel", back_populates="user")
     sharing_urls = relationship("SharingURLModel", back_populates="user")
