@@ -62,12 +62,14 @@ class SqlaCardRepository(CardRepository):
             if not card_db:
                 raise CardNotFound(f'No such card with id {card.id}')
 
+            allowed_fields = {column.name for column in CardModel.__table__.columns}
+
             for field, value in card.dump().items():
-                setattr(card_db, field, value)
+                if field in allowed_fields:
+                    setattr(card_db, field, value)
 
             await self._session.commit()
             await self._session.refresh(card_db)
-
             return self.__to_entity(card_db)
         except SQLAlchemyError as e:
             await self._session.rollback()
