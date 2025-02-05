@@ -129,6 +129,8 @@ class SqlaGroupRepository(GroupRepository):
 
 
     def __to_user_entity(self, user_db: UserModel) -> User:
+        if not user_db:
+            return None
         return User(id=user_db.id,
                     first_name=user_db.first_name,
                     last_name=user_db.last_name,
