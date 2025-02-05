@@ -86,7 +86,7 @@ async def update_card(card: UpdateCardSchema,
     try:
         result = await use_case.execute(Card(**card.model_dump()), user.id)
         return CardSchema(**result.dump())
-    except CardNotFound as e:
+    except (CardNotFound, FileNotFound) as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except NotACardOwner as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
