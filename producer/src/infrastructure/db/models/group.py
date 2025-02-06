@@ -17,5 +17,5 @@ class GroupModel(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
-    cards = relationship("CardModel", back_populates="group", lazy="joined")
+    cards = relationship("CardModel", back_populates="group", order_by='CardModel.order', lazy="joined")
     user = relationship("UserModel", back_populates="groups")

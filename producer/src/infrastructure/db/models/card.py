@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, UUID, String, Enum, DateTime, ForeignKey, JSON
+from sqlalchemy import Column, UUID, String, Enum, DateTime, ForeignKey, JSON, Integer
 from sqlalchemy.orm import relationship
 
 from src.domain.entities import CardStatus
@@ -22,6 +22,7 @@ class CardModel(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     author_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
     result = Column(JSON, default={}, nullable=False)
+    order = Column(Integer, nullable=False, server_default='0')
 
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
