@@ -123,6 +123,17 @@ class MoveCardUseCase:
             raise NotACardOwner('You do not have permission to access this card.')
         group_old = await self._group_service.get_by_id(card_ex.group_id)
 
+        if card_ex.group_id == new_group_id and order is None:
+            return card_ex
+
+        if order is None:
+            new_group = await self._group_service.get_by_id(new_group_id)
+            if not new_group.user_id == user_id:
+                raise NotAGroupOwner('You do not have permission to access this group.')
+            card_ex.group_id = new_group_id
+            card_ex.order = len(new_group.cards)
+            updated_card = await self._card_service.update(card_ex)
+            return updated_card
 
         if card_ex.group_id == new_group_id:
             if card_ex.order != order:
