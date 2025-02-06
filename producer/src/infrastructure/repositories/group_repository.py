@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 
 from src.domain.entities import User
 from src.domain.entities.card import Card
@@ -53,8 +54,6 @@ class SqlaGroupRepository(GroupRepository):
             if not group_db:
                 raise GroupNotFound(f'No such card with id {group.id}')
 
-            # for field, value in group.dump().items():
-            #     setattr(group_db, field, value)
             group_db.name = group.name
 
             await self._session.commit()
@@ -64,6 +63,19 @@ class SqlaGroupRepository(GroupRepository):
         except SQLAlchemyError as e:
             await self._session.rollback()
             raise e
+
+
+    async def update(self, group: Group) -> Group:
+        try:
+            group_db = self.__from_entity(group)
+            self._session.add(group_db)
+            await self._session.commit()
+            await self._session.refresh(group_db)
+            return self.__to_entity(group_db)
+        except SQLAlchemyError as e:
+            await self._session.rollback()
+            raise e
+
 
     async def delete(self, group_id: UUID) -> Group:
         try:
@@ -118,6 +130,7 @@ class SqlaGroupRepository(GroupRepository):
                     user_id=card_db.user_id,
                     author_id=card_db.author_id,
                     status=card_db.status,
+                    order=card_db.order,
                     markdown_text=card_db.markdown_text,
                     file_id=card_db.file_id,
                     group_id=card_db.group_id,
