@@ -101,7 +101,7 @@ async def move_card(schema: MoveCardSchema,
                     user: User = Depends(get_current_user),
                     use_case: MoveCardUseCase = Depends(get_move_card_use_case)):
     try:
-        updated = await use_case.execute(schema.card_id, schema.group_id, user.id)
+        updated = await use_case.execute(schema.card_id, schema.group_id, schema.order, user.id)
         return CardSchema(**updated.dump())
     except CardNotFound as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
