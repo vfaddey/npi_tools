@@ -58,4 +58,4 @@ class ShareUrlSchema(BaseModel):
 class MoveCardSchema(BaseModel):
     card_id: UUID4
     group_id: UUID4
-    order: int = Field(..., ge=0)
+    order: Optional[int] = Field(None, ge=0)
