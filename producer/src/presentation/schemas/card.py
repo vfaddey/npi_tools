@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, UUID4, HttpUrl
+from pydantic import BaseModel, UUID4, HttpUrl, Field
 
 from src.domain.entities import CardStatus
 from src.domain.entities.card import CardType
@@ -23,6 +23,7 @@ class CardSchema(BaseModel):
     markdown_text: str
     status: CardStatus
     user_id: UUID4
+    order: int
     author_id: Optional[UUID4] = None
     group_id: UUID4
     result: Optional[dict] = {}
@@ -57,3 +58,4 @@ class ShareUrlSchema(BaseModel):
 class MoveCardSchema(BaseModel):
     card_id: UUID4
     group_id: UUID4
+    order: int = Field(..., ge=0)
