@@ -32,5 +32,10 @@ class GroupRepository(ABC):
 
 
     @abstractmethod
+    async def update(self, group: Group) -> Group:
+        raise NotImplementedError
+
+
+    @abstractmethod
     async def delete(self, group_id: UUID) -> Group:
         raise NotImplementedError
