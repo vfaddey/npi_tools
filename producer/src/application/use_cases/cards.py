@@ -1,5 +1,3 @@
-from io import BytesIO
-from typing import List
 from uuid import UUID
 
 from src.application.exceptions.cards import NotACardOwner, SharingError
@@ -27,7 +25,8 @@ class CreateCardUseCase:
     async def execute(self, card: Card, user_id: UUID) -> Card:
         try:
             if not card.group_id:
-                new_group = Group(name=f'Группа {card.card_type}', user_id=user_id)
+                new_group = Group(name=f'Группа {card.card_type}',
+                                  user_id=user_id)
                 new_group = await self._group_service.create(new_group)
                 card.group_id = new_group.id
             else:
@@ -35,6 +34,7 @@ class CreateCardUseCase:
                 if group_ex.user_id != user_id:
                     raise NotAGroupOwner('You are not allowed to create card in this group')
                 card.group_id = group_ex.id
+                card.order = len(group_ex.cards)
             card.user_id = user_id
             card.author_id = user_id
             result = await self._card_service.create(card)
@@ -117,16 +117,50 @@ class MoveCardUseCase:
         self._card_service = card_service
         self._group_service = group_service
 
-    async def execute(self, card_id: UUID, new_group_id: UUID, user_id: UUID) -> Card:
+    async def execute(self, card_id: UUID, new_group_id: UUID, order: int, user_id: UUID) -> Card:
         card_ex = await self._card_service.get_by_id(card_id)
-        group_new = await self._group_service.get_by_id(new_group_id)
         if not card_ex.user_id == user_id:
             raise NotACardOwner('You do not have permission to access this card.')
+        group_old = await self._group_service.get_by_id(card_ex.group_id)
+
+
+        if card_ex.group_id == new_group_id:
+            if card_ex.order != order:
+                if order > len(group_old.cards):
+                    group_old.cards.remove(card_ex)
+                    group_old.cards.append(card_ex)
+                else:
+                    group_old.cards.remove(card_ex)
+                    group_old.cards.insert(order, card_ex)
+            for idx, card in enumerate(group_old.cards):
+                card.order = idx
+                await self._card_service.update(card)
+
+            for card in group_old.cards:
+                if card.id == card_id:
+                    return card
+
+        group_new = await self._group_service.get_by_id(new_group_id)
         if not group_new.user_id == user_id:
-            raise NotAGroupOwner('You do not have permission to access this card.')
-        card_ex.group_id = group_new.id
-        updated = await self._card_service.update(card_ex)
-        return updated
+            raise NotAGroupOwner('You do not have permission to access this group.')
+        card_ex.group_id = new_group_id
+        group_old.cards.remove(card_ex)
+        for idx, card in enumerate(group_old.cards):
+            card.order = idx
+            await self._card_service.update(card)
+
+        if order > len(group_new.cards):
+            group_new.cards.append(card_ex)
+        else:
+            group_new.cards.insert(order, card_ex)
+
+        for idx, card in enumerate(group_new.cards):
+            card.order = idx
+            await self._card_service.update(card)
+
+        for card in group_new.cards:
+            if card.id == card_id:
+                return card
 
 
 class DeleteCardUseCase:
@@ -224,6 +258,7 @@ class CopyBySharingCodeUseCase:
             new_group = Group(name=f'Копия {card_ex.card_type}', user_id=user_id)
             new_group = await self._group_service.create(new_group)
             card_ex.group_id = new_group.id
+            card_ex.order = 0
             copied = await self._card_service.create_copy(card_ex, card_id)
             return copied
 

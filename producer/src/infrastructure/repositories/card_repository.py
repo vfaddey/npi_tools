@@ -144,6 +144,7 @@ class SqlaCardRepository(CardRepository):
                     user_id=card_db.user_id,
                     author_id=card_db.author_id,
                     status=card_db.status,
+                    order=card_db.order,
                     markdown_text=card_db.markdown_text,
                     file_id=card_db.file_id,
                     group_id=card_db.group_id,

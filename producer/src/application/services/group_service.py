@@ -21,8 +21,8 @@ class GroupService:
     async def get_by_user_id(self, user_id: UUID) -> list[Group]:
         return await self.__repository.get_by_user_id(user_id)
 
-    # async def update(self, group: Group) -> Group:
-    #     return await self.__repository.update(group.id, group)
+    async def update(self, group: Group) -> Group:
+        return await self.__repository.update(group)
 
     async def rename_group(self, group_id: UUID, new_name: str) -> Group:
         group_ex = await self.__repository.get(group_id)
@@ -36,6 +36,4 @@ class GroupService:
             raise NotAGroupOwner('You are not allowed to access this group')
         return await self.__repository.delete(group_id)
 
-    async def add_card_to_group(self, group_id: UUID, card_id: UUID) -> Group:
-        ...
 
