@@ -117,7 +117,7 @@ class MoveCardUseCase:
         self._card_service = card_service
         self._group_service = group_service
 
-    async def execute(self, card_id: UUID, new_group_id: UUID, order: int, user_id: UUID) -> Card:
+    async def execute(self, card_id: UUID, new_group_id: UUID, order: int | None, user_id: UUID) -> Card:
         card_ex = await self._card_service.get_by_id(card_id)
         if not card_ex.user_id == user_id:
             raise NotACardOwner('You do not have permission to access this card.')
@@ -149,7 +149,7 @@ class MoveCardUseCase:
             card.order = idx
             await self._card_service.update(card)
 
-        if order > len(group_new.cards):
+        if order > len(group_new.cards) or order is None:
             group_new.cards.append(card_ex)
         else:
             group_new.cards.insert(order, card_ex)
