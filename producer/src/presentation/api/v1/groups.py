@@ -7,12 +7,12 @@ from starlette import status
 from src.application.exceptions.base import NPIToolsException
 from src.application.exceptions.groups import NotAGroupOwner
 from src.application.use_cases.groups import GetGroupsUseCase, RenameGroupUseCase, DeleteGroupUseCase, \
-    CreateGroupUseCase
+    CreateGroupUseCase, MoveGroupUseCase
 from src.domain.entities import User
 from src.domain.exceptions import GroupNotFound
 from src.presentation.api.deps import get_current_user, get_groups_use_case, get_rename_group_use_case, \
-    get_delete_group_use_case, get_create_group_use_case
-from src.presentation.schemas.group import GroupSchema, RenameGroupSchema, CreateGroupSchema
+    get_delete_group_use_case, get_create_group_use_case, get_move_group_use_case
+from src.presentation.schemas.group import GroupSchema, RenameGroupSchema, CreateGroupSchema, MoveGroupSchema
 
 router = APIRouter(prefix='/groups', tags=['groups'])
 
@@ -61,6 +61,22 @@ async def rename_group(schema: RenameGroupSchema,
     except NPIToolsException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
+@router.put('',
+            response_model=GroupSchema,
+            description='Поменять порядок группы')
+async def move_group(schema: MoveGroupSchema,
+                     user: User = Depends(get_current_user),
+                     use_case: MoveGroupUseCase = Depends(get_move_group_use_case)):
+    try:
+        result = await use_case.execute(schema.group_id, schema.order, user.id)
+        return result
+    except GroupNotFound as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except NotAGroupOwner as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except NPIToolsException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.delete('/{group_id}',

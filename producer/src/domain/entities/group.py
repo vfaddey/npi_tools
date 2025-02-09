@@ -11,6 +11,7 @@ class Group:
     user_id: UUID
     id: Optional[UUID] = None
     name: Optional[str] = None
+    order: Optional[int] = 0
     cards: Optional[list[Card]] = field(default_factory=list)
 
     created_at: Optional[datetime] = None
