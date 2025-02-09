@@ -2,7 +2,6 @@ from uuid import UUID
 
 from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import joinedload
 
 from src.domain.entities import User
 from src.domain.entities.card import Card
@@ -43,7 +42,7 @@ class SqlaGroupRepository(GroupRepository):
         return [self.__to_entity(g) for g in groups_db]
 
     async def get_by_user_id(self, user_id: UUID) -> list[Group]:
-        stmt = select(GroupModel).where(GroupModel.user_id == user_id)
+        stmt = select(GroupModel).where(GroupModel.user_id == user_id).order_by(GroupModel.order)
         result = await self._session.execute(stmt)
         group_db = result.unique().scalars().all()
         return [self.__to_entity(g) for g in group_db]
@@ -67,8 +66,16 @@ class SqlaGroupRepository(GroupRepository):
 
     async def update(self, group: Group) -> Group:
         try:
-            group_db = self.__from_entity(group)
-            self._session.add(group_db)
+            group_db = await self._session.get(GroupModel, group.id)
+            if not group_db:
+                raise GroupNotFound(f'No such group with id {group.id}')
+
+            allowed_fields = {column.name for column in GroupModel.__table__.columns}
+
+            for field, value in group.dump().items():
+                if field in allowed_fields:
+                    setattr(group_db, field, value)
+
             await self._session.commit()
             await self._session.refresh(group_db)
             return self.__to_entity(group_db)
@@ -93,10 +100,11 @@ class SqlaGroupRepository(GroupRepository):
 
 
     def __from_entity(self, group: Group) -> GroupModel:
-        cards_db = [CardModel(**c.dump()) for c in group.cards]
+        # cards_db = [CardModel(**c.dump()) for c in group.cards]
         group_db = GroupModel(name=group.name,
+                              order=group.order,
                               user_id=group.user_id)
-        group_db.cards.extend(cards_db)
+        # group_db.cards.extend(cards_db)
         return group_db
 
     def __to_entity(self, group_db: GroupModel) -> Group:
@@ -105,6 +113,7 @@ class SqlaGroupRepository(GroupRepository):
                      user_id=group_db.user_id,
                      name=group_db.name,
                      cards=cards,
+                     order=group_db.order,
                      created_at=group_db.created_at,
                      updated_at=group_db.updated_at)
 

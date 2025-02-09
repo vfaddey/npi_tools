@@ -10,6 +10,9 @@ class GroupService:
         self.__repository = repository
 
     async def create(self, group: Group) -> Group:
+        if not group.order:
+            groups = await self.get_by_user_id(group.user_id)
+            group.order = len(groups)
         return await self.__repository.create(group)
 
     async def get_by_id(self, group_id: UUID) -> Group:
