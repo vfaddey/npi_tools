@@ -7,3 +7,7 @@ class NotACardOwner(NPIToolsException):
 
 class SharingError(NPIToolsException):
     ...
+
+
+class FailedToDeleteCard(NPIToolsException):
+    ...

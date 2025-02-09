@@ -3,7 +3,7 @@ from pydantic import UUID4
 from starlette import status
 
 from src.application.exceptions.base import NPIToolsException
-from src.application.exceptions.cards import NotACardOwner, SharingError
+from src.application.exceptions.cards import NotACardOwner, SharingError, FailedToDeleteCard
 from src.application.exceptions.files import NotAFileOwner, FileNotFound
 from src.application.exceptions.groups import NotAGroupOwner
 from src.application.use_cases.cards import CreateCardUseCase, GetUserCardsUseCase, GetCardUseCase, DeleteCardUseCase, \
@@ -115,17 +115,19 @@ async def move_card(schema: MoveCardSchema,
 
 
 @router.delete('/{card_id}',
-               response_model=CardSchema,
+               status_code=status.HTTP_204_NO_CONTENT,
                description='Удаление карточки')
 async def delete_card(card_id: UUID4,
                       user: User = Depends(get_current_user),
                       use_case: DeleteCardUseCase = Depends(get_delete_card_use_case)):
     try:
-        return await use_case.execute(card_id, user.id)
+         return await use_case.execute(card_id, user.id)
     except CardNotFound as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except NotACardOwner as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except FailedToDeleteCard as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     except NPIToolsException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 

@@ -84,7 +84,7 @@ class SqlaCardRepository(CardRepository):
         card_db = result.scalars().first()
         if not card_db:
             raise CardNotFound(f'No such card with id {card_id}')
-        return self.__to_entity(card_db)
+        return True
 
     @override
     async def create_sharing_url(self, sharing_url: SharingURL) -> SharingURL:

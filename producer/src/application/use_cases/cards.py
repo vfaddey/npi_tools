@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from src.application.exceptions.cards import NotACardOwner, SharingError
+from src.application.exceptions.cards import NotACardOwner, SharingError, FailedToDeleteCard
 from src.application.exceptions.files import FileNotFound
 from src.application.exceptions.groups import NotAGroupOwner
 from src.application.services.card_service import CardService
@@ -186,8 +186,9 @@ class DeleteCardUseCase:
         if card_ex.user_id != user_id:
             raise NotACardOwner('You do not have permission to access this card.')
         deleted = await self._card_service.delete(card_id)
+        if not deleted:
+            raise FailedToDeleteCard('Failed to delete card')
         return deleted
-
 
 class CalculateCardUseCase:
     def __init__(self,
