@@ -68,9 +68,12 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      PRODUCER_MINIO_SECRET_KEY: ${PRODUCER_MINIO_SECRET_KEY}
+      CONSUMER_MINIO_SECRET_KEY: ${CONSUMER_MINIO_SECRET_KEY}
     volumes:
       - ./minio-data:/data
-
+      - ./minio_entrypoint.sh:/usr/local/bin/minio_entrypoint.sh:ro
+    entrypoint: ["/usr/local/bin/minio_entrypoint.sh"]
 
 volumes:
   rabbitmq_data:
