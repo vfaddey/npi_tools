@@ -47,7 +47,7 @@ services:
       - .env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+      - ./rabbit_entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
     entrypoint: [ "/usr/local/bin/rabbit_entrypoint.sh" ]
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
