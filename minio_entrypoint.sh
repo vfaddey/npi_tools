@@ -24,12 +24,14 @@ if ! mc ls myminio/card-files >/dev/null 2>&1; then
 fi
 
 
-
 echo "Добавление пользователя producer..."
 mc admin user add myminio producer "${PRODUCER_MINIO_SECRET_KEY}" || echo "Пользователь producer уже существует"
 
 echo "Добавление пользователя consumer..."
 mc admin user add myminio consumer "${CONSUMER_MINIO_SECRET_KEY}" || echo "Пользователь consumer уже существует"
 
+
+ mc admin policy set myminio readwrite user=producer
+ mc admin policy set myminio readwrite user=consumer
 
 wait ${MINIO_PID}
