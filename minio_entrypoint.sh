@@ -31,7 +31,8 @@ echo "Добавление пользователя consumer..."
 mc admin user add myminio consumer "${CONSUMER_MINIO_SECRET_KEY}" || echo "Пользователь consumer уже существует"
 
 
- mc admin policy set myminio readwrite user=producer
- mc admin policy set myminio readwrite user=consumer
+mc admin policy attach myminio readwrite --user producer
+mc admin policy attach myminio readwrite --user consumer
+
 
 wait ${MINIO_PID}
