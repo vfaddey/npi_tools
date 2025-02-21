@@ -154,8 +154,8 @@ class MoveCardUseCase:
         group_new = await self._group_service.get_by_id(new_group_id)
         if not group_new.user_id == user_id:
             raise NotAGroupOwner('You do not have permission to access this group.')
-        card_ex.group_id = new_group_id
         group_old.cards.remove(card_ex)
+        card_ex.group_id = new_group_id
         for idx, card in enumerate(group_old.cards):
             card.order = idx
             await self._card_service.update(card)
