@@ -35,7 +35,7 @@ class Card:
     user_id: Optional[UUID] = None
     author_id: Optional[UUID] = None
     order: Optional[int] = 0
-    result: Optional[dict] = field(default_factory=dict)
+    result: Optional[dict] = None
     user: Optional['User'] = None
     author: Optional['User'] = None
 

@@ -11,6 +11,7 @@ class CardType(str, Enum):
 
 
 class CardStatus(str, Enum):
+    CREATED = 'created'
     FAILED = 'failed'
     PENDING = 'pending'
     COMPLETE = 'complete'
