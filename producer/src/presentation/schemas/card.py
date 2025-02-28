@@ -26,7 +26,7 @@ class CardSchema(BaseModel):
     order: int
     author_id: Optional[UUID4] = None
     group_id: UUID4
-    result: Optional[dict] = {}
+    result: Optional[dict] = None
     user: Optional[UserSchemaShort] = None
     author: Optional[UserSchemaShort] = None
 

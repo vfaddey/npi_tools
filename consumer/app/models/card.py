@@ -16,7 +16,7 @@ class CardModel(Base):
     markdown_text = Column(String, nullable=False, default="")
     file_id = Column(UUID(as_uuid=True), nullable=False)
     user_id = Column(UUID(as_uuid=True), nullable=False, index=True)
-    result = Column(JSON, default={}, nullable=False)
+    result = Column(JSON, default=None)
 
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)

@@ -21,7 +21,7 @@ class CardModel(Base):
     group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     author_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
-    result = Column(JSON, default={}, nullable=False)
+    result = Column(JSON, default=None)
     order = Column(Integer, nullable=False, server_default='0')
 
     created_at = Column(DateTime, nullable=False, default=datetime.now)
