@@ -23,7 +23,7 @@ from app.card_handlers.pseudosoil.src.excel_reader import (
 from app.card_handlers.base.card_handler import (
     CardHandler,
     HandlerResult,
-    DataAsset,
+    DataAsset, ResultParameter,
 )
 from app.entities.card import CardType
 
@@ -60,13 +60,29 @@ class PseudosoilHandler(CardHandler):
             well_param = read_parameters_well(file_content)
             well_permeability = well_performance_permeability(well_param)
 
+            average_permability_param = ResultParameter(
+                name="average_permability",
+                translation='Средняя проницаемость',
+                value=average_k_value,
+            )
+            well_permeability_param = ResultParameter(
+                name="well_permeability",
+                translation='Проницаемость скважины',
+                value=well_permeability,
+            )
+            isotropic_results_param = ResultParameter(
+                name="isotropic_results",
+                translation='Изотропные результаты',
+                value=isotropic_results,
+            )
             # Формирование результата
             result = HandlerResult(
-                data={
-                    "average_permeability": average_k_value,
-                    "well_permeability": well_permeability,
-                    "isotropic_results": isotropic_results,
-                },
+
+                data=[
+                    average_permability_param,
+                    well_permeability_param,
+                    isotropic_results_param,
+                ],
                 assets=[
                     DataAsset("graph", ".svg", graph),
                 ],
