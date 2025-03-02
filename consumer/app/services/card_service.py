@@ -121,6 +121,7 @@ class CardService:
             user_id=user_id,
             filename=filename,
             uploaded_at=datetime.utcnow(),
+            uploaded_by_user=False,
             is_public=is_public
         )
         await self._file_repository.create(file)
