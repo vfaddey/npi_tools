@@ -14,7 +14,7 @@ class FileRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_files_by_user(self, user_id: int | UUID):
+    async def get_files_by_user(self, user_id: int | UUID, uploaded_by_user: bool = False) -> list[File]:
         raise NotImplementedError
 
     @abstractmethod

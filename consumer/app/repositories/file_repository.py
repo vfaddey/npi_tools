@@ -50,4 +50,5 @@ class SqlaFileRepository(FileRepository):
                     user_id=file_db.user_id,
                     uploaded_at=file_db.uploaded_at,
                     is_public=file_db.is_public,
+                    uploaded_by_user=file_db.uploaded_by_user,
                     filename=file_db.filename)

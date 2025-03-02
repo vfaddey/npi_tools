@@ -9,6 +9,7 @@ class File:
     filename: str
     uploaded_at: datetime
     is_public: bool
+    uploaded_by_user: bool
     user_id: UUID
 
     def dump(self):

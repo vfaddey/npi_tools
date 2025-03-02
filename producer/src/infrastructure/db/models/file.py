@@ -15,6 +15,7 @@ class FileModel(Base):
     filename = Column(String, nullable=False)
     description = Column(String, nullable=False, server_default='', default='')
     is_public = Column(Boolean, nullable=False, default=False)
+    uploaded_by_user = Column(Boolean, nullable=False, default=False)
     uploaded_at = Column(DateTime, nullable=False, default=datetime.now)
     file_hash = Column(String(64), index=True)
 

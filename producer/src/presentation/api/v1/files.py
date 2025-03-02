@@ -25,9 +25,10 @@ router = APIRouter(prefix='/files', tags=['files'])
 @router.get('',
             response_model=list[FileSchema],
             description='Получить список всех файлов пользователя')
-async def get_files(use_case: GetUserFilesUseCase = Depends(get_user_files_use_case),
+async def get_files(show_all: Optional[bool] = False,
+                    use_case: GetUserFilesUseCase = Depends(get_user_files_use_case),
                     user: User = Depends(get_current_user)):
-    return await use_case.execute(user.id)
+    return await use_case.execute(user.id, show_all)
 
 
 @router.post('/upload',

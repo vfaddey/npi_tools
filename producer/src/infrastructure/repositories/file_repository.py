@@ -20,6 +20,7 @@ class SqlaFileRepository(FileRepository):
             filename=file.filename,
             description=file.description,
             is_public=file.is_public,
+            uploaded_by_user=file.uploaded_by_user,
             uploaded_at=file.uploaded_at,
             file_hash=file.file_hash,
         )
@@ -32,8 +33,10 @@ class SqlaFileRepository(FileRepository):
             await self._session.rollback()
             raise e
 
-    async def get_files_by_user(self, user_id: int | UUID) -> list[File]:
-        stmt = select(FileModel).where(FileModel.user_id == user_id)
+    async def get_files_by_user(self, user_id: int | UUID, uploaded_by_user: bool) -> list[File]:
+        stmt = (select(FileModel)
+                .where(FileModel.user_id == user_id, FileModel.uploaded_by_user == uploaded_by_user)
+                )
         result = await self._session.execute(stmt)
         files_db = result.unique().scalars().all()
         return [self.__to_entity(f) for f in files_db]
@@ -75,5 +78,6 @@ class SqlaFileRepository(FileRepository):
                     filename=file_db.filename,
                     description=file_db.description,
                     is_public=file_db.is_public,
+                    uploaded_by_user=file_db.uploaded_by_user,
                     uploaded_at=file_db.uploaded_at,
                     file_hash=file_db.file_hash)

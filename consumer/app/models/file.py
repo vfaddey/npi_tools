@@ -13,4 +13,5 @@ class FileModel(Base):
     user_id = Column(UUID(as_uuid=True), nullable=False)
     filename = Column(String, nullable=False)
     is_public = Column(Boolean, nullable=False, default=False)
+    uploaded_by_user = Column(Boolean, nullable=False)
     uploaded_at = Column(DateTime, nullable=False, default=datetime.now)

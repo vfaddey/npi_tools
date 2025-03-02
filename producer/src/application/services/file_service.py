@@ -25,6 +25,7 @@ class FileService:
                           file_data: bytes,
                           filename: str,
                           is_public: bool = False,
+                          uploaded_by_user: bool = True,
                           description: str = '') -> File:
         file_id = uuid.uuid4()
         file_hash = hashlib.sha256(file_data).hexdigest()
@@ -49,6 +50,7 @@ class FileService:
                 description=description,
                 uploaded_at=datetime.utcnow(),
                 is_public=is_public,
+                uploaded_by_user=uploaded_by_user,
                 file_hash=file_hash,
             )
             await self.file_repo.save(file)
@@ -74,8 +76,8 @@ class FileService:
             print(e)
             raise e
 
-    async def get_user_files(self, user_id: uuid.UUID):
-        files = await self.file_repo.get_files_by_user(user_id)
+    async def get_user_files(self, user_id: uuid.UUID, show_all: bool):
+        files = await self.file_repo.get_files_by_user(user_id, (not show_all))
         return files
 
     async def get_public_files(self):
