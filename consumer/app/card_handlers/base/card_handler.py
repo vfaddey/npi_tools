@@ -12,8 +12,14 @@ class DataAsset:
     data: Any # файл непосредственно
 
 @dataclass
+class ResultParameter:
+    value: str | int | float | list
+    name: str
+    translation: Optional[str] = None
+
+@dataclass
 class HandlerResult:
-    data: Optional[dict[str, Any]] # json с результатами
+    data: Optional[list[ResultParameter]] # json с результатами
     assets: Optional[list[DataAsset]] # массив файлов
 
 
