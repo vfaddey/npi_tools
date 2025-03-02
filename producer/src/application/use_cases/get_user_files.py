@@ -8,5 +8,5 @@ class GetUserFilesUseCase:
                  file_service: FileService):
         self._file_service = file_service
 
-    async def execute(self, user_id) -> list[File]:
-        return await self._file_service.get_user_files(user_id)
+    async def execute(self, user_id, show_all: bool = False) -> list[File]:
+        return await self._file_service.get_user_files(user_id, show_all)
