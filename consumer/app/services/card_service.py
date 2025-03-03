@@ -39,7 +39,7 @@ class CardService:
                                              user_id=card.user_id,
                                              bucket_name=settings.MINIO_BUCKET_NAME)
             handler = self._handler_manager.get_handler(card.card_type)
-            if card.status == CardStatus.PENDING:
+            if card.status == CardStatus.PENDING or card.status == CardStatus.COMPLETE:
                 result = handler.process(data)
                 updated_card = await self.__save_result(card, result)
         except CardNotFound as e:
