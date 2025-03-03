@@ -84,7 +84,7 @@ class PseudosoilHandler(CardHandler):
                     isotropic_results_param,
                 ],
                 assets=[
-                    DataAsset("graph", ".svg", graph),
+                    DataAsset("График проницаемости", "graph", ".svg", graph),
                 ],
             )
 

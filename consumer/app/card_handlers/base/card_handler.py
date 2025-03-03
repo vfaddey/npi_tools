@@ -7,6 +7,7 @@ from typing import Any, Optional
 
 @dataclass
 class DataAsset:
+    name: str
     asset_type: str # пример: table, graph
     file_format: str # пример: .png, .csv, .xslx итд
     data: Any # файл непосредственно
