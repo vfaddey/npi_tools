@@ -69,6 +69,7 @@ class CardService:
                                                  filename=f'some_file{asset.file_format}')
             saved_assets.append(
                 {
+                    'name': asset.name,
                     'asset_type': asset.asset_type,
                     'filename': saved_asset.filename,
                     'file_id': str(saved_asset.id),
