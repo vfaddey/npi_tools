@@ -70,6 +70,9 @@ async def get_file_by_id(file_id: UUID4,
             return StreamingResponse(
                 BytesIO(data),
                 media_type='image/svg+xml',
+                headers={
+                    "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"
+                }
             )
         if file.filename.endswith('.png'):
             return StreamingResponse(
