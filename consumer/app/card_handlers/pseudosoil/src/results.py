@@ -88,14 +88,24 @@ def generate_plot(k_values_calculated, average_k_value) -> BytesIO:
 
     output = BytesIO()
 
-    # Сохранение графика в поток в формате SVG
     plt.savefig(output, format="svg")
     plt.close()
 
-    # Перемотка потока в начало
     output.seek(0)
 
-    return output
+    svg_bytes = output.getvalue()
+    svg_str = svg_bytes.decode("utf-8")
+
+    additional_svg = """
+    <svg width="200" height="100" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+      <rect x="0" y="0" width="100" height="50" fill="blue"/>
+    </svg>
+    """
+
+    insert_point = svg_str.find('>') + 1
+    modified_svg = svg_str[:insert_point] + additional_svg + svg_str[insert_point:]
+
+    return BytesIO(modified_svg.encode("utf-8"))
 
 
 def save_results_to_excel(average_k_value: float, output_path_excel: Path) -> None:
