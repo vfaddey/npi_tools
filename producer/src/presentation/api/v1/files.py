@@ -71,6 +71,11 @@ async def get_file_by_id(file_id: UUID4,
                 BytesIO(data),
                 media_type='image/svg+xml',
             )
+        if file.filename.endswith('.png'):
+            return StreamingResponse(
+                BytesIO(data),
+                media_type='image/png',
+            )
         return StreamingResponse(
             BytesIO(data),
             media_type='application/octet-stream',
