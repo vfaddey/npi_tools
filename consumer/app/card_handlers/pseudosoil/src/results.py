@@ -83,29 +83,21 @@ def generate_plot(k_values_calculated, average_k_value) -> BytesIO:
     plt.ylabel("Результаты определения, мД")
     plt.title("Результаты определения проницаемости")
     plt.grid()
-    # Добавление легенды
     plt.legend()
 
-    output = BytesIO()
-
-    plt.savefig(output, format="svg")
+    original_output = BytesIO()
+    plt.savefig(original_output, format="png", dpi=200)
     plt.close()
+    original_output.seek(0)
 
-    output.seek(0)
+    # original_svg = original_output.getvalue().decode("utf-8")
+    #
+    # wrapped_svg = f'''<svg viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
+    #   <rect x="0" y="0" width="100" height="50" fill="blue"/>
+    #   {original_svg}
+    # </svg>'''
 
-    svg_bytes = output.getvalue()
-    svg_str = svg_bytes.decode("utf-8")
-
-    additional_svg = """
-    <svg width="200" height="100" viewBox="0 0 100 50" preserveAspectRatio="xMidYMid meet">
-      <rect x="0" y="0" width="100" height="50" fill="blue"/>
-    </svg>
-    """
-
-    insert_point = svg_str.find('>') + 1
-    modified_svg = svg_str[:insert_point] + additional_svg + svg_str[insert_point:]
-
-    return BytesIO(modified_svg.encode("utf-8"))
+    return original_output
 
 
 def save_results_to_excel(average_k_value: float, output_path_excel: Path) -> None:
