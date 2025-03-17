@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
+from src.domain.entities.card import CardType
 
 
 @dataclass
@@ -14,6 +15,8 @@ class File:
     uploaded_by_user: bool
     user_id: UUID
     description: Optional[str] = ''
+    template_for: Optional[CardType] = None
+
     file_hash: Optional[str] = None
 
     def dump(self):
