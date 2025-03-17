@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
+from src.domain.entities.card import CardType
 from src.domain.entities.file import File
 
 
@@ -18,7 +19,7 @@ class FileRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_public_files(self):
+    async def get_public_files(self, card_type: CardType = None):
         raise NotImplementedError
 
     @abstractmethod

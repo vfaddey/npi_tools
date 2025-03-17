@@ -8,6 +8,7 @@ from io import BytesIO
 from minio import Minio
 
 from src.application.exceptions.files import NotAFileOwner, FileNotFound, FileAlreadyExists
+from src.domain.entities.card import CardType
 from src.domain.entities.file import File
 from src.domain.repositories.file_repository import FileRepository
 
@@ -26,7 +27,8 @@ class FileService:
                           filename: str,
                           is_public: bool = False,
                           uploaded_by_user: bool = True,
-                          description: str = '') -> File:
+                          description: str = '',
+                          template_for: CardType = None) -> File:
         file_id = uuid.uuid4()
         file_hash = hashlib.sha256(file_data).hexdigest()
         try:
@@ -52,6 +54,7 @@ class FileService:
                 is_public=is_public,
                 uploaded_by_user=uploaded_by_user,
                 file_hash=file_hash,
+                template_for=template_for
             )
             await self.file_repo.save(file)
             return file
@@ -80,8 +83,8 @@ class FileService:
         files = await self.file_repo.get_files_by_user(user_id, (not show_all))
         return files
 
-    async def get_public_files(self):
-        return await self.file_repo.get_public_files()
+    async def get_public_files(self, card_type: CardType = None):
+        return await self.file_repo.get_public_files(card_type)
 
     async def delete_by_id(self,
                            file_id: uuid.UUID,

@@ -3,7 +3,6 @@ from uuid import UUID
 from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
-from sqlalchemy.testing.plugin.plugin_base import options
 from typing_extensions import override
 
 from src.domain.entities import Card, User

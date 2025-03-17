@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from src.application.services.file_service import FileService
+from src.domain.entities.card import CardType
 from src.infrastructure.minio import BUCKET_NAME
 
 
@@ -21,5 +22,5 @@ class GetPublicFilesUseCase:
                  file_service: FileService):
         self._file_service = file_service
 
-    async def execute(self):
-        return await self._file_service.get_public_files()
+    async def execute(self, card_type: CardType = None):
+        return await self._file_service.get_public_files(card_type)

@@ -4,6 +4,7 @@ from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.application.exceptions.files import FileNotFound
+from src.domain.entities.card import CardType
 from src.domain.repositories.file_repository import FileRepository
 from src.domain.entities import File
 from src.infrastructure.db.models import FileModel
@@ -23,6 +24,7 @@ class SqlaFileRepository(FileRepository):
             uploaded_by_user=file.uploaded_by_user,
             uploaded_at=file.uploaded_at,
             file_hash=file.file_hash,
+            template_for=file.template_for
         )
         try:
             self._session.add(file_db)
@@ -41,8 +43,10 @@ class SqlaFileRepository(FileRepository):
         files_db = result.unique().scalars().all()
         return [self.__to_entity(f) for f in files_db]
 
-    async def get_public_files(self):
+    async def get_public_files(self, card_type: CardType = None):
         stmt = select(FileModel).where(FileModel.is_public == True)
+        if card_type:
+            stmt = select(FileModel).where(FileModel.is_public == True, FileModel.template_for == card_type)
         result = await self._session.execute(stmt)
         files_db = result.scalars().all()
         return [self.__to_entity(f) for f in files_db]
@@ -80,4 +84,5 @@ class SqlaFileRepository(FileRepository):
                     is_public=file_db.is_public,
                     uploaded_by_user=file_db.uploaded_by_user,
                     uploaded_at=file_db.uploaded_at,
-                    file_hash=file_db.file_hash)
+                    file_hash=file_db.file_hash,
+                    template_for=file_db.template_for)
