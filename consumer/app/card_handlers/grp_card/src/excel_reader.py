@@ -1,6 +1,4 @@
-import openpyxl
 import numpy as np
-from pathlib import Path
 from .data import WellProperty, SeamProperty, AuxiliaryProperty
 
 # Изменил функцию считывания данных из экселя, чтобы на вход подавался не путь, а pd.ExcelFile
