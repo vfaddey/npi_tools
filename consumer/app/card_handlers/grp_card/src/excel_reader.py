@@ -1,5 +1,6 @@
 import numpy as np
 from .data import WellProperty, SeamProperty, AuxiliaryProperty
+import pandas as pd
 
 # Изменил функцию считывания данных из экселя, чтобы на вход подавался не путь, а pd.ExcelFile
 
