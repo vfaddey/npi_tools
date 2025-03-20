@@ -14,11 +14,13 @@ class CardStatus(str, Enum):
 
 class CardType(str, Enum):
     PSEUDOSOIL = 'pseudosoil'
+    SIMPLEGDIS = 'simplegdis'
     PVT = 'pvt'
 
 CARD_TYPE_TRANSLATIONS = {
     CardType.PSEUDOSOIL: 'Псевдогрунт',
     CardType.PVT: 'PVT-расчет',
+    CardType.SIMPLEGDIS: 'Простые ГДИС'
 }
 
 

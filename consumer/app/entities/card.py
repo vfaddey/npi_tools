@@ -9,6 +9,7 @@ from app.card_handlers.base.card_handler import HandlerResult
 class CardType(str, Enum):
     PSEUDOSOIL = 'pseudosoil'
     GRP = 'grp'
+    SIMPLEGDIS = 'simplegdis'
 
 
 class CardStatus(str, Enum):
