@@ -20,7 +20,7 @@ from app.entities.card import CardType
 
 
 class SimpleGDISHandler(CardHandler):
-    CARD_TYPE = "SIMPLEGDIS"  # CardType.SIMPLEGDIS
+    CARD_TYPE = CardType.SIMPLEGDIS
 
     @print_work_time
     def process(self, data) -> HandlerResult:
