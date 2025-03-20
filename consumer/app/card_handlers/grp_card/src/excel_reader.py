@@ -3,6 +3,8 @@ import numpy as np
 from pathlib import Path
 from .data import WellProperty, SeamProperty, AuxiliaryProperty
 
+# Изменил функцию считывания данных из экселя, чтобы на вход подавался не путь, а pd.ExcelFile
+
 
 def load_excel_data(file_content: pd.ExcelFile):
     """Загружает данные из Excel и возвращает параметры"""

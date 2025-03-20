@@ -4,6 +4,8 @@ import copy
 from io import BytesIO
 from .productivity_coefficient import ProductivityCoefficient
 
+# добавил этот модуль для преобразования графиков в байты
+
 
 def generate_flow_distribution_graph(prod_coef) -> dict:
     """

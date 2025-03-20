@@ -80,7 +80,7 @@ if __name__ == '__main__':
     handler = GrpCardHandler()
 
     try:
-        # тут по идее подаем байты
+        # тут по идее подаются байты
         result = handler.process(data)
         print("Результаты обработки:")
         print(result.data)  # JSON данные
