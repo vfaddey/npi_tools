@@ -58,8 +58,8 @@ class GrpCardHandler(CardHandler):
             result = HandlerResult(
                 data=result_data,
                 assets=[
-                    DataAsset(name="График распределения притока", file_format=".png", asset_type="graph", graph_1),
-                    DataAsset(name="График зависимости продуктивности", file_format=".png", asset_type="graph", graph_2),
+                    DataAsset(name="График распределения притока", file_format=".png", asset_type="graph", data=graph_1),
+                    DataAsset(name="График зависимости продуктивности", file_format=".png", asset_type="graph", data=graph_2),
                 ]
             )
             return result
