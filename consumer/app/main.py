@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from app.adapters.minio_client import client as minio_client
 from app.adapters.rabbitmq_client import RabbitMQConsumer
 from app.card_handlers.base.handler_manager import HandlerManager
+from app.card_handlers.grp_card.grp_optimal_params import GrpCardHandler
 from app.card_handlers.pseudosoil.pseudosoil_card import PseudosoilHandler
 from app.card_handlers.simple_gdis_calculate.simple_gdis_card import SimpleGDISHandler
 from app.core.config import settings
@@ -15,7 +16,8 @@ app = FastAPI()
 
 
 handler_manager = HandlerManager(PseudosoilHandler,
-                                 SimpleGDISHandler)
+                                 SimpleGDISHandler,
+                                 GrpCardHandler)
 card_service_factory = CardServiceFactory(AsyncSessionFactory,
                                           minio_client,
                                           handler_manager)
