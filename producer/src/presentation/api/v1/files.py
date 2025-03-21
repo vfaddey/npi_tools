@@ -80,6 +80,9 @@ async def get_file_by_id(file_id: UUID4,
             return StreamingResponse(
                 BytesIO(data),
                 media_type='image/png',
+                headers={
+                    "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"
+                }
             )
         return StreamingResponse(
             BytesIO(data),
