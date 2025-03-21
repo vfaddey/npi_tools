@@ -9,6 +9,7 @@ services:
       dockerfile: Dockerfile
     networks:
       - npi-network
+    restart: always
     env_file:
       - ./producer/.env
     depends_on:
@@ -25,6 +26,7 @@ services:
       dockerfile: Dockerfile
     networks:
       - npi-network
+    restart: always
     env_file:
       - ./consumer/.env
     depends_on:
@@ -40,6 +42,7 @@ services:
     hostname: rabbitmq
     networks:
       - npi-network
+    restart: always
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
@@ -61,6 +64,7 @@ services:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     container_name: minio
+    restart: always
     networks:
       - npi-network
     env_file:
