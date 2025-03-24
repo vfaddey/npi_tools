@@ -53,10 +53,11 @@ class GrpCardHandler(CardHandler):
             result = HandlerResult(
                 data=result_data,
                 assets=[
-                    DataAsset(name="График распределения притока", file_format=".png", asset_type="graph", data=graph_1),
-                    DataAsset(name="График зависимости продуктивности", file_format=".png", asset_type="graph", data=graph_2),
+                    DataAsset(name="График распределения притока", file_format=".png", asset_type="graph", data=graph_1['bytes']),
+                    DataAsset(name="График зависимости продуктивности", file_format=".png", asset_type="graph", data=graph_2['bytes']),
                 ]
             )
+            print(type(graph_1))
             return result
         except Exception as e:
             raise CardHandlerException(f"Ошибка при обработке данных: {e}")
