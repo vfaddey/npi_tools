@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from .data import WellProperty, SeamProperty, AuxiliaryProperty
 import pandas as pd
 
@@ -9,52 +10,62 @@ def load_excel_data(file_content: pd.ExcelFile):
     """Загружает данные из Excel и возвращает параметры"""
 
     try:
-        # Ожидаем, что file_content - это экземпляр pd.ExcelFile
-        # Проверка наличия листа "Исходные данные"
-        if 'Исходные данные' not in file_content.sheet_names:
-            raise ValueError("Лист 'Исходные данные' не найден в файле.")
+        # Загружаем лист "Исходные данные"
+        sheet_name = 'Исходные данные'
+        if sheet_name not in file_content.sheet_names:
+            raise ValueError(f"Лист '{sheet_name}' не найден в файле.")
 
-        ws = file_content.parse('Исходные данные')
+        ws = file_content.parse(sheet_name, header=None)  # Читаем без заголовков
 
-        # Проверяем, что важные данные не пустые
-        required_cells = ['C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9',
-                          'C12', 'C13', 'C14', 'C15', 'C16', 'C19', 'C20', 'C21', 'C22', 'C23']
+        # Проверка на пустой лист
+        if ws.empty:
+            raise ValueError(f"Лист '{sheet_name}' пуст.")
 
-        # Проверка значений ячеек, извлекая из DataFrame
-        for cell in required_cells:
-            if pd.isna(ws[cell].iloc[0]):
-                raise ValueError(f"Отсутствует значение в ячейке {cell}")
+        # Создаем словарь для перевода столбцов (A → 0, B → 1, C → 2, ...)
+        col_map = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4}
+
+        # Функция для извлечения значения из DataFrame по адресу Excel (например, "C2")
+        def get_value(cell: str):
+            col_letter, row_number = cell[0], int(cell[1:]) - 1
+            col_index = col_map.get(col_letter)
+
+            if col_index is None:
+                raise ValueError(f"Ошибка: столбец {col_letter} не найден в col_map!")
+
+            try:
+                return ws.iloc[row_number, col_index]
+            except IndexError:
+                raise ValueError(f"Ошибка: ячейка {cell} выходит за границы данных.")
 
         # Извлечение данных для SeamProperty
         seams = SeamProperty(
-            ws['C2'].iloc[0],  # Проницаемость пласта, м^2
-            ws['C3'].iloc[0],  # Объемный коэффициент
-            ws['C4'].iloc[0],  # Вязкость жидкости, Па*с
-            ws['C5'].iloc[0],  # Толщина пласта, м
-            ws['C6'].iloc[0],  # Радиус зоны дренирования, м
-            ws['C7'].iloc[0],  # Размер зоны дренирования по оси X, м
-            ws['C8'].iloc[0],  # Размер зоны дренирования по оси Y, м
-            ws['C9'].iloc[0]  # Начальное пластовое давление, Па
+            get_value('C2'),  # Проницаемость пласта, м^2
+            get_value('C3'),  # Объемный коэффициент
+            get_value('C4'),  # Вязкость жидкости, Па*с
+            get_value('C5'),  # Толщина пласта, м
+            get_value('C6'),  # Радиус зоны дренирования, м
+            get_value('C7'),  # Размер зоны дренирования по оси X, м
+            get_value('C8'),  # Размер зоны дренирования по оси Y, м
+            get_value('C9')  # Начальное пластовое давление, Па
         )
-
         # Извлечение данных для WellProperty
         well = WellProperty(
-            ws['C12'].iloc[0],  # Дебит скважины, м³/с
-            ws['C13'].iloc[0],  # Радиус скважины, м
-            ws['C14'].iloc[0],  # Половина длины трещины, м
-            ws['C15'].iloc[0],  # Проницаемость трещины, м²
-            ws['C16'].iloc[0],  # Ширина трещины, м
+            get_value('C12'),  # Дебит скважины, м³/с
+            get_value('C13'),  # Радиус скважины, м
+            get_value('C14'),  # Половина длины трещины, м
+            get_value('C15'),  # Проницаемость трещины, м²
+            get_value('C16'),  # Ширина трещины, м
             None  # Доп. параметр, если нужен
         )
 
         # Извлечение данных для AuxiliaryProperty
         aux = AuxiliaryProperty(
-            ws['C19'].iloc[0],  # Начальная координата
-            ws['C20'].iloc[0],  # Точность
-            ws['C21'].iloc[0],  # Шаг вычисления притока
-            ws['C22'].iloc[0],  # Проницаемость загрязненной зоны
-            ws['C23'].iloc[0],  # Точка начала загрязненной зоны
-            np.flip(ws['E'][1:21].values).tolist()  # Длина загрязненной зоны
+            get_value('C19'),  # Начальная координата
+            get_value('C20'),  # Точность
+            get_value('C21'),  # Шаг вычисления притока
+            get_value('C22'),  # Проницаемость загрязненной зоны
+            get_value('C23'),  # Точка начала загрязненной зоны
+            np.flip(ws.iloc[1:21, col_map['E']].values).tolist()  # Длина загрязненной зоны
         )
 
         return seams, well, aux

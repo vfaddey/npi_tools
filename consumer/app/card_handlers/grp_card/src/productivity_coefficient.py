@@ -49,7 +49,7 @@ class ProductivityCoefficient:
         )
 
         # Определяем забойное давление
-        p_w = calc_pwf(ksi_e, ksi_1, self.seam_props.reservoir_pressure, f_e, c, c_3, self.aux_props.epsilon)
+        # p_w = calc_pwf(ksi_e, ksi_1, self.seam_props.reservoir_pressure, f_e, c, c_3, self.aux_props.epsilon)
         # print('Рзаб = ', p_w, 'атм')
 
         # Определяем Кпрод
@@ -86,18 +86,18 @@ class ProductivityCoefficient:
         # print('Суммарный дебит скважины: ' + str(sum_qi))
 
         # Распределение давления вдоль трещины
-        p_fi = calc_p_fracture(
-            self.well_props.xf,
-            self.aux_props.x_coordinate,
-            self.seam_props.reservoir_pressure,
-            ksi_e,
-            ksi_1,
-            f_e,
-            c,
-            c_3,
-            self.aux_props.accuracy,
-            self.aux_props.epsilon,
-        )
+        # p_fi = calc_p_fracture(
+        #     self.well_props.xf,
+        #     self.aux_props.x_coordinate,
+        #     self.seam_props.reservoir_pressure,
+        #     ksi_e,
+        #     ksi_1,
+        #     f_e,
+        #     c,
+        #     c_3,
+        #     self.aux_props.accuracy,
+        #     self.aux_props.epsilon,
+        # )
         # print('Распределение давления вдоль трещины', p_fi)
 
         # Сглаживание графика распределения притока вдоль трещины

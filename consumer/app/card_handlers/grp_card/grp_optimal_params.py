@@ -33,11 +33,6 @@ class GrpCardHandler(CardHandler):
             if seams is None or well is None or aux is None:
                 raise ValueError("Ошибка: данные не загружены, расчет не выполнен.")
 
-            # Извлечение данных
-            seams, well, aux = load_excel_data(file_content)
-            if seams is None or well is None or aux is None:
-                raise ValueError("Ошибка: данные не загружены, расчет не выполнен.")
-
             # Расчет коэффициента продуктивности
             prod_coef = ProductivityCoefficient(seam_props=seams, well_props=well, aux_props=aux)
             prod_coef.calc_prod_coef()
@@ -81,11 +76,13 @@ if __name__ == '__main__':
 
     try:
         # тут по идее подаются байты
-        result = handler.process(data)
-        print("Результаты обработки:")
-        print(result.data)  # JSON данные
-        print("Графики и файлы:")
-        for asset in result.assets:
-            print(f"{asset.asset_type}: {asset.data}")
+        filename = 'Входной файл.xlsx'
+        with open(filename, 'rb') as file:
+            result = handler.process(file)
+            print("Результаты обработки:")
+            print(result.data)  # JSON данные
+            print("Графики и файлы:")
+            for asset in result.assets:
+                print(f"{asset.asset_type}: {asset.data}")
     except Exception as e:
         print(f"Ошибка при выполнении обработчика: {e}")
