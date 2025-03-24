@@ -43,10 +43,12 @@ class GrpCardHandler(CardHandler):
 
             # Формирование параметров результата
             result_data = [
-                ResultParameter(name="flow_distribution", translation="Распределение притока",
-                                value=prod_coef.well_props.array_flow_along_fracture),
-                ResultParameter(name="productivity_coef", translation="Коэффициент продуктивности",
-                                value=prod_coef.well_props.array_prod_coef_tail),
+                ResultParameter(name="flow_distribution",
+                                translation="Распределение притока",
+                                value=prod_coef.well_props.array_flow_along_fracture.tolist()),
+                ResultParameter(name="productivity_coef",
+                                translation="Коэффициент продуктивности",
+                                value=prod_coef.well_props.array_prod_coef_tail.tolist()),
             ]
 
             # Формирование итогового результата
