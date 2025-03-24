@@ -57,7 +57,6 @@ class GrpCardHandler(CardHandler):
                     DataAsset(name="График зависимости продуктивности", file_format=".png", asset_type="graph", data=graph_2['bytes']),
                 ]
             )
-            print(type(graph_1))
             return result
         except Exception as e:
             raise CardHandlerException(f"Ошибка при обработке данных: {e}")
