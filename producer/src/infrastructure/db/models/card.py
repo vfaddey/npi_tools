@@ -17,7 +17,7 @@ class CardModel(Base):
     card_type_translation = Column(String, nullable=True)
     status = Column(Enum(CardStatus), default=CardStatus.CREATED, nullable=False)
     markdown_text = Column(String, nullable=False, default='')
-    file_id = Column(UUID(as_uuid=True), ForeignKey("files.id", ondelete="CASCADE"))
+    file_id = Column(UUID(as_uuid=True), ForeignKey("files.id", ondelete="SET NULL"), nullable=True)
     group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     author_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
