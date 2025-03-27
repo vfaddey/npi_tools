@@ -11,6 +11,7 @@ from src.presentation.schemas.user import UserSchemaShort
 class CreateCardSchema(BaseModel):
     card_type: CardType
     name: str
+    file_id: Optional[UUID4] = None
     group_id: Optional[UUID4] = None
 
 
