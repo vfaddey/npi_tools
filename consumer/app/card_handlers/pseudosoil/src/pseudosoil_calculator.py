@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
-from consumer.app.card_handlers.pseudosoil.src.excel_reader import (
+from app.card_handlers.pseudosoil.src.excel_reader import (
     read_parameters_isotropic,
     get_selected_case,
 )
@@ -30,22 +30,24 @@ def calculate_case_1(parameters) -> Tuple[float, float, float]:
     return phi_result, k_result, S_result
 
 
-file_path = Path("Входной файл.xlsx")
-selected_case = get_selected_case(file_path)
+if __name__ == '__main__':
+
+    file_path = Path("Входной файл.xlsx")
+    selected_case = get_selected_case(file_path)
 
 
-if selected_case == "Одинаковые капилляры":
-    # Получаем параметры в зависимости от выбранного случая
-    parameters = read_parameters_isotropic(file_path)
-    # Расчет в зависимости от выбранного случая
-    result = calculate_case_1(parameters)
-    phi, k, S = result
-    phi = round(phi, 3)
-    k = round(k, 3)
-    S = round(S, 1)
-    print(f"Пористость: {phi} д.ед")
-    print(f"Проницаемость: {k} мД")
-    print(f"Удельная поверхность: {S} м^2/м^3")
+    if selected_case == "Одинаковые капилляры":
+        # Получаем параметры в зависимости от выбранного случая
+        parameters = read_parameters_isotropic(file_path)
+        # Расчет в зависимости от выбранного случая
+        result = calculate_case_1(parameters)
+        phi, k, S = result
+        phi = round(phi, 3)
+        k = round(k, 3)
+        S = round(S, 1)
+        print(f"Пористость: {phi} д.ед")
+        print(f"Проницаемость: {k} мД")
+        print(f"Удельная поверхность: {S} м^2/м^3")
 
 
 def integrand_k(r, rho_interp_func) -> float:
@@ -171,15 +173,17 @@ def calculate_case_2(parameters) -> Tuple[float, float, float]:
     return result_k, result_phi, specific_surface_area
 
 
-# Проверка выбранного случая
-if selected_case == "Капилляры с равномерным распределением":
-    # Получаем параметры в зависимости от выбранного случая
-    parameters = read_parameters_isotropic(file_path)
-    # Вычисление результатов и вывод
-    result_k, result_phi, specific_surface_area = calculate_case_2(parameters)
-    print(f"Пористость: {result_phi} д.ед")
-    print(f"Проницаемость: {result_k} мД")
-    print(f"Удельная поверхность: {specific_surface_area} м^2/м^3")
+if __name__ == '__main__':
+
+    # Проверка выбранного случая
+    if selected_case == "Капилляры с равномерным распределением":
+        # Получаем параметры в зависимости от выбранного случая
+        parameters = read_parameters_isotropic(file_path)
+        # Вычисление результатов и вывод
+        result_k, result_phi, specific_surface_area = calculate_case_2(parameters)
+        print(f"Пористость: {result_phi} д.ед")
+        print(f"Проницаемость: {result_k} мД")
+        print(f"Удельная поверхность: {specific_surface_area} м^2/м^3")
 
 
 def calculate_case_3(parameters) -> Tuple[float, float, float]:
@@ -226,15 +230,16 @@ def calculate_case_3(parameters) -> Tuple[float, float, float]:
 
     return result_k, result_phi, specific_surface_area
 
+if __name__ == '__main__':
 
-if selected_case == "Капилляры с неравномерным распределением":
-    # Получаем параметры в зависимости от выбранного случая
-    parameters = read_parameters_isotropic(file_path)
-    # Вычисление результатов и вывод
-    result_k, result_phi, specific_surface_area = calculate_case_3(parameters)
-    print(f"Пористость: {result_phi} д.ед")
-    print(f"Проницаемость: {result_k} мД")
-    print(f"Удельная поверхность: {specific_surface_area} м^2/м^3")
+    if selected_case == "Капилляры с неравномерным распределением":
+        # Получаем параметры в зависимости от выбранного случая
+        parameters = read_parameters_isotropic(file_path)
+        # Вычисление результатов и вывод
+        result_k, result_phi, specific_surface_area = calculate_case_3(parameters)
+        print(f"Пористость: {result_phi} д.ед")
+        print(f"Проницаемость: {result_k} мД")
+        print(f"Удельная поверхность: {specific_surface_area} м^2/м^3")
 
 
 def calculate_case_4(parameters) -> Tuple[float, float]:
@@ -250,14 +255,14 @@ def calculate_case_4(parameters) -> Tuple[float, float]:
     phi_4 = (w * 10**-3) * xi * 100
     return k_4, phi_4
 
-
-if selected_case == "Одинаковые трещины":
-    # Получаем параметры в зависимости от выбранного случая
-    parameters = read_parameters_isotropic(file_path)
-    result_4 = calculate_case_4(parameters)
-    k_4, phi_4 = result_4
-    print(f"Пористость: {phi_4} %")
-    print(f"Проницаемость: {round(k_4, 3)} мД")
+if __name__ == '__main__':
+    if selected_case == "Одинаковые трещины":
+        # Получаем параметры в зависимости от выбранного случая
+        parameters = read_parameters_isotropic(file_path)
+        result_4 = calculate_case_4(parameters)
+        k_4, phi_4 = result_4
+        print(f"Пористость: {phi_4} %")
+        print(f"Проницаемость: {round(k_4, 3)} мД")
 
 
 def integrand_k_w(w, rho_interp_func) -> float:
@@ -313,12 +318,14 @@ def calculate_case_5(parameters) -> Tuple[float, float]:
     return k, result_phi
 
 
-if selected_case == "Трещины с равномерным распределением":
-    # Получаем параметры в зависимости от выбранного случая
-    parameters = read_parameters_isotropic(file_path)
-    k, result_phi = calculate_case_5(parameters)
-    print(f"Пористость: {round(result_phi, 4)} %")
-    print(f"Проницаемость: {round(k, 3)} мД")
+if __name__ == '__main__':
+
+    if selected_case == "Трещины с равномерным распределением":
+        # Получаем параметры в зависимости от выбранного случая
+        parameters = read_parameters_isotropic(file_path)
+        k, result_phi = calculate_case_5(parameters)
+        print(f"Пористость: {round(result_phi, 4)} %")
+        print(f"Проницаемость: {round(k, 3)} мД")
 
 
 def calculate_case_6(parameters) -> Tuple[float, float]:
@@ -349,13 +356,14 @@ def calculate_case_6(parameters) -> Tuple[float, float]:
     k = result_k * 10**15
     return k, result_phi
 
+if __name__ == '__main__':
 
-if selected_case == "Трещины с неравномерным распределением":
-    # Получаем параметры в зависимости от выбранного случая
-    parameters = read_parameters_isotropic(file_path)
-    k, result_phi = calculate_case_5(parameters)
-    print(f"Пористость: {round(result_phi, 4)} %")
-    print(f"Проницаемость: {round(k, 3)} мД")
+    if selected_case == "Трещины с неравномерным распределением":
+        # Получаем параметры в зависимости от выбранного случая
+        parameters = read_parameters_isotropic(file_path)
+        k, result_phi = calculate_case_5(parameters)
+        print(f"Пористость: {round(result_phi, 4)} %")
+        print(f"Проницаемость: {round(k, 3)} мД")
 
 
 def calculate_case_7(parameters) -> float:
@@ -372,9 +380,10 @@ def calculate_case_7(parameters) -> float:
     return rounded_r0
 
 
-if selected_case == "Расчет радиуса поры":
-    # Получаем параметры в зависимости от выбранного случая
-    parameters = read_parameters_isotropic(file_path)
-    resulting_r0 = calculate_case_7(parameters)
-    # Выводим полученное значение радиуса поры
-    print(f"Радиус поры (r0): {resulting_r0} мм")
+if __name__ == '__main__':
+    if selected_case == "Расчет радиуса поры":
+        # Получаем параметры в зависимости от выбранного случая
+        parameters = read_parameters_isotropic(file_path)
+        resulting_r0 = calculate_case_7(parameters)
+        # Выводим полученное значение радиуса поры
+        print(f"Радиус поры (r0): {resulting_r0} мм")

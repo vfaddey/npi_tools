@@ -1,22 +1,21 @@
 from pathlib import Path
 import pandas as pd
-from consumer.app.card_handlers.pseudosoil.src.data_class import (
+from app.card_handlers.pseudosoil.src.data_class import (
     WellParameters,
     LabExperimentData,
 )
 
 
-def get_selected_case(file_path: Path, sheet_name: str = "Капилляры и трещины") -> str:
+def get_selected_case(file_content: pd.ExcelFile, sheet_name: str = "Капилляры и трещины") -> str:
     """
     Функция считывания выбранного случая из файла Excel.
 
-    :param file_path: Путь к файлу Excel.
+    :param file_content: Открытый Excel file.
     :param sheet_name: Название листа Excel, из которого нужно считать случай (по умолчанию "Капилляры и трещины").
     :return: Строка с названием выбранного случая.
     """
     # Считываем выбранный случай из Excel
-    selected_case = pd.read_excel(
-        file_path,
+    selected_case = file_content.parse(
         usecols="B",  # Считываем только колонку B
         sheet_name=sheet_name,
         nrows=1,  # Считываем только первую строку
@@ -28,16 +27,16 @@ def get_selected_case(file_path: Path, sheet_name: str = "Капилляры и 
     return selected_case
 
 
-def read_parameters_isotropic(file_path: Path):
+def read_parameters_isotropic(file_content: pd.ExcelFile):
     """
     Функция считывания параметров эффективной изотропной среды из файла Excel в зависимости от выбранного случая.
 
-    :param file_path: Путь к файлу Excel с входными параметрами.
+    :param file_content: Открытый Excel файл.
     :return: Кортеж, содержащий соответствующие параметры в зависимости от выбранного случая.
     """
     # global selected_case
     selected_case = get_selected_case(
-        file_path
+        file_content
     )  # Считываем выбранный случай через отдельную функцию
 
     if selected_case is None:
@@ -46,8 +45,7 @@ def read_parameters_isotropic(file_path: Path):
 
     try:
         # Считываем выбранный случай из Excel-файла
-        selected_case = pd.read_excel(
-            file_path,
+        selected_case = file_content.parse(
             usecols=("B"),
             sheet_name="Капилляры и трещины",
             nrows=1,
@@ -56,24 +54,21 @@ def read_parameters_isotropic(file_path: Path):
 
         # Считываем параметры в зависимости от выбранного случая
         if selected_case == "Одинаковые капилляры":
-            r0 = pd.read_excel(
-                file_path,
+            r0 = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=5,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            n = pd.read_excel(
-                file_path,
+            n = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=5,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            d = pd.read_excel(
-                file_path,
+            d = file_content.parse(
                 usecols="E",
                 sheet_name="Капилляры и трещины",
                 skiprows=5,
@@ -83,80 +78,70 @@ def read_parameters_isotropic(file_path: Path):
             return r0, n, d, selected_case
 
         if selected_case == "Капилляры с равномерным распределением":
-            rmin = pd.read_excel(
-                file_path,
+            rmin = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=9,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            rmax = pd.read_excel(
-                file_path,
+            rmax = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=9,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            n = pd.read_excel(
-                file_path,
+            n = file_content.parse(
                 usecols="E",
                 sheet_name="Капилляры и трещины",
                 skiprows=9,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            d = pd.read_excel(
-                file_path,
+            d = file_content.parse(
                 usecols="F",
                 sheet_name="Капилляры и трещины",
                 skiprows=9,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x1 = pd.read_excel(
-                file_path,
+            x1 = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y1 = pd.read_excel(
-                file_path,
+            y1 = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x2 = pd.read_excel(
-                file_path,
+            x2 = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y2 = pd.read_excel(
-                file_path,
+            y2 = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x3 = pd.read_excel(
-                file_path,
+            x3 = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y3 = pd.read_excel(
-                file_path,
+            y3 = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
@@ -166,80 +151,70 @@ def read_parameters_isotropic(file_path: Path):
             return rmin, rmax, n, d, x1, y1, x2, y2, x3, y3, selected_case
 
         if selected_case == "Капилляры с неравномерным распределением":
-            rmin = pd.read_excel(
-                file_path,
+            rmin = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=13,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            rmax = pd.read_excel(
-                file_path,
+            rmax = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=13,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            n = pd.read_excel(
-                file_path,
+            n = file_content.parse(
                 usecols="E",
                 sheet_name="Капилляры и трещины",
                 skiprows=13,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            d = pd.read_excel(
-                file_path,
+            d = file_content.parse(
                 usecols="F",
                 sheet_name="Капилляры и трещины",
                 skiprows=13,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x1 = pd.read_excel(
-                file_path,
+            x1 = file_content.parse(
                 usecols="I",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y1 = pd.read_excel(
-                file_path,
+            y1 = file_content.parse(
                 usecols="J",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x2 = pd.read_excel(
-                file_path,
+            x2 = file_content.parse(
                 usecols="I",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y2 = pd.read_excel(
-                file_path,
+            y2 = file_content.parse(
                 usecols="J",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x3 = pd.read_excel(
-                file_path,
+            x3 = file_content.parse(
                 usecols="I",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y3 = pd.read_excel(
-                file_path,
+            y3 = file_content.parse(
                 usecols="J",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
@@ -249,16 +224,14 @@ def read_parameters_isotropic(file_path: Path):
             return rmin, rmax, n, d, x1, y1, x2, y2, x3, y3, selected_case
 
         if selected_case == "Одинаковые трещины":
-            w = pd.read_excel(
-                file_path,
+            w = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=17,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            xi = pd.read_excel(
-                file_path,
+            xi = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=17,
@@ -268,72 +241,63 @@ def read_parameters_isotropic(file_path: Path):
             return w, xi, selected_case
 
         if selected_case == "Трещины с равномерным распределением":
-            wmin = pd.read_excel(
-                file_path,
+            wmin = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=21,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            wmax = pd.read_excel(
-                file_path,
+            wmax = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=21,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            xi = pd.read_excel(
-                file_path,
+            xi = file_content.parse(
                 usecols="E",
                 sheet_name="Капилляры и трещины",
                 skiprows=21,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x1 = pd.read_excel(
-                file_path,
+            x1 = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y1 = pd.read_excel(
-                file_path,
+            y1 = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x2 = pd.read_excel(
-                file_path,
+            x2 = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y2 = pd.read_excel(
-                file_path,
+            y2 = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x3 = pd.read_excel(
-                file_path,
+            x3 = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y3 = pd.read_excel(
-                file_path,
+            y3 = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
@@ -343,72 +307,63 @@ def read_parameters_isotropic(file_path: Path):
             return wmin, wmax, xi, x1, y1, x2, y2, x3, y3, selected_case
 
         if selected_case == "Трещины с неравномерным распределением":
-            wmin = pd.read_excel(
-                file_path,
+            wmin = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=25,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            wmax = pd.read_excel(
-                file_path,
+            wmax = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=25,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            xi = pd.read_excel(
-                file_path,
+            xi = file_content.parse(
                 usecols="E",
                 sheet_name="Капилляры и трещины",
                 skiprows=25,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x1 = pd.read_excel(
-                file_path,
+            x1 = file_content.parse(
                 usecols="I",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y1 = pd.read_excel(
-                file_path,
+            y1 = file_content.parse(
                 usecols="J",
                 sheet_name="Капилляры и трещины",
                 skiprows=34,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x2 = pd.read_excel(
-                file_path,
+            x2 = file_content.parse(
                 usecols="I",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y2 = pd.read_excel(
-                file_path,
+            y2 = file_content.parse(
                 usecols="J",
                 sheet_name="Капилляры и трещины",
                 skiprows=35,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            x3 = pd.read_excel(
-                file_path,
+            x3 = file_content.parse(
                 usecols="I",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            y3 = pd.read_excel(
-                file_path,
+            y3 = file_content.parse(
                 usecols="J",
                 sheet_name="Капилляры и трещины",
                 skiprows=36,
@@ -418,16 +373,14 @@ def read_parameters_isotropic(file_path: Path):
             return wmin, wmax, xi, x1, y1, x2, y2, x3, y3, selected_case
 
         if selected_case == "Расчет радиуса поры":
-            k = pd.read_excel(
-                file_path,
+            k = file_content.parse(
                 usecols="C",
                 sheet_name="Капилляры и трещины",
                 skiprows=29,
                 nrows=1,
                 header=None,
             ).iloc[0, 0]
-            phi = pd.read_excel(
-                file_path,
+            phi = file_content.parse(
                 usecols="D",
                 sheet_name="Капилляры и трещины",
                 skiprows=29,
@@ -441,16 +394,15 @@ def read_parameters_isotropic(file_path: Path):
         return None
 
 
-def read_parameters_lab(file_path: Path) -> LabExperimentData:
+def read_parameters_lab(file_content: pd.ExcelFile) -> LabExperimentData:
     """
     Функция считывания параметров лабораторного эксперимента с указанного листа Excel.
 
-    :param file_path: Путь к файлу Excel с входными параметрами.
+    :param file_content: Открытый Excel файл.
     :return: Объект класса LabExperimentData, содержащий считанные параметры.
     """
     # Считываем с Excel-файла необходимые значения с листа "Данные лаб. эксперимента"
-    df = pd.read_excel(file_path, usecols="B:D", sheet_name="Данные лаб. эксперимента")
-    df = df.dropna()
+    df = file_content.parse(sheet_name="Данные лаб. эксперимента", usecols="B:D").dropna()
 
     # Создаем пустой список, в котором храним считанные значения
     df["Значения"] = df["Значения"].astype(float)
@@ -460,8 +412,7 @@ def read_parameters_lab(file_path: Path) -> LabExperimentData:
     d, m, mu, l = data[0], data[1], data[2], data[3]
 
     # Считываем массив со значениями k и расхода с того же листа
-    df2 = pd.read_excel(
-        file_path,
+    df2 = file_content.parse(
         usecols="E:F",
         skiprows=range(0, 9),
         nrows=10,
@@ -478,72 +429,64 @@ def read_parameters_lab(file_path: Path) -> LabExperimentData:
     return LabExperimentData(d, m, mu, l, k_values, flow_values)
 
 
-def read_parameters_well(file_path: Path) -> WellParameters:
+def read_parameters_well(file_content: pd.ExcelFile) -> WellParameters:
     """
     Функция считывания параметров работы скважины.
 
-    :param file_path: Путь к файлу Excel с входными параметрами.
+    :param file_content: Открытый Excel файл.
     :return: Объект класса WellParameters, содержащий считанные параметры.
     """
     # Считывание параметров скважины из столбца B на листе "Данные по скважине"
-    length_filter = pd.read_excel(
-        file_path,
+    length_filter = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=1,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    well_diameter = pd.read_excel(
-        file_path,
+    well_diameter = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=2,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    perforation_density = pd.read_excel(
-        file_path,
+    perforation_density = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=3,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    hole_diameter = pd.read_excel(
-        file_path,
+    hole_diameter = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=4,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    oil_density = pd.read_excel(
-        file_path,
+    oil_density = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=5,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    oil_volume_factor = pd.read_excel(
-        file_path,
+    oil_volume_factor = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=6,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    reservoir_oil_viscosity = pd.read_excel(
-        file_path,
+    reservoir_oil_viscosity = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=7,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    well_spacing = pd.read_excel(
-        file_path,
+    well_spacing = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="B",
         skiprows=8,
@@ -552,24 +495,21 @@ def read_parameters_well(file_path: Path) -> WellParameters:
     ).iloc[0, 0]
 
     # Считывание параметров режима скважины из столбца F на листе "Данные по скважине"
-    bottomhole_pressure = pd.read_excel(
-        file_path,
+    bottomhole_pressure = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="F",
         skiprows=1,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    reservoir_pressure = pd.read_excel(
-        file_path,
+    reservoir_pressure = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="F",
         skiprows=2,
         nrows=1,
         header=None,
     ).iloc[0, 0]
-    flow_rate = pd.read_excel(
-        file_path,
+    flow_rate = file_content.parse(
         sheet_name="Данные по скважине",
         usecols="F",
         skiprows=3,

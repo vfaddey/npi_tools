@@ -8,9 +8,27 @@ services:
       context: ./producer
       dockerfile: Dockerfile
     networks:
-      - tutor_local_default
+      - npi-network
+    restart: always
     env_file:
       - ./producer/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+
+  consumer:
+    container_name: consumer
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
+    networks:
+      - npi-network
+    restart: always
+    env_file:
+      - ./consumer/.env
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -23,7 +41,8 @@ services:
     container_name: rabbitmq
     hostname: rabbitmq
     networks:
-      - tutor_local_default
+      - npi-network
+    restart: always
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
@@ -31,17 +50,8 @@ services:
       - .env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-    entrypoint: >
-      /bin/bash -c "
-      rabbitmq-server &
-      sleep 10 &&
-      rabbitmqctl add_vhost my_vhost &&
-      rabbitmqctl set_permissions -p my_vhost admin '.*' '.*' '.*' &&
-      rabbitmqctl set_permissions -p / admin '.*' '.*' '.*' &&
-      rabbitmqctl stop_app &&
-      rabbitmqctl start_app &&
-      wait
-      "
+      - ./rabbit_entrypoint.sh:/usr/local/bin/rabbit_entrypoint.sh:ro
+    entrypoint: [ "/usr/local/bin/rabbit_entrypoint.sh" ]
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 10s
@@ -49,27 +59,31 @@ services:
       retries: 5
       start_period: 20s
 
+
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     container_name: minio
+    restart: always
     networks:
-      - tutor_local_default
+      - npi-network
     env_file:
       - .env
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      PRODUCER_MINIO_SECRET_KEY: ${PRODUCER_MINIO_SECRET_KEY}
+      CONSUMER_MINIO_SECRET_KEY: ${CONSUMER_MINIO_SECRET_KEY}
     volumes:
       - ./minio-data:/data
-
-
+      - ./minio_entrypoint.sh:/usr/local/bin/minio_entrypoint.sh:ro
+    entrypoint: ["/usr/local/bin/minio_entrypoint.sh"]
 
 volumes:
   rabbitmq_data:
     driver: local
 
 networks:
-  tutor_local_default:
+  npi-network:
     external: True
 
